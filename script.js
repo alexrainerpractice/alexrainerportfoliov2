@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (toggleEditorial && togglePhotography) {
         toggleEditorial.addEventListener('click', () => {
-
+            document.body.classList.remove('photography-active');
             const overlay = document.querySelector('.fullscreen-overlay');
             if (overlay) {
                 window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
@@ -63,30 +63,34 @@ document.addEventListener('DOMContentLoaded', () => {
             editorialList.style.display = 'none';
             photographyView.style.display = 'block';
             if (middleWrapper) middleWrapper.style.display = 'none';
+            document.body.classList.add('photography-active');
         });
     }
 
     const gridDecrease = document.getElementById('grid-decrease');
     const gridIncrease = document.getElementById('grid-increase');
-    let gridScale = 1.0;
+    const scales = [0.6, 1.0, 1.6]; // Small, Medium, Big
+    let scaleIndex = 1; // Default to Medium
 
     if (gridDecrease && gridIncrease) {
         gridDecrease.addEventListener('click', () => {
-            // "Decrease" makes images smaller (more images)
-            gridScale = Math.max(0.5, gridScale - 0.1);
-            updateGridScale();
+            if (scaleIndex > 0) {
+                scaleIndex--;
+                updateGridScale();
+            }
         });
         gridIncrease.addEventListener('click', () => {
-            // "Increase" makes images bigger (fewer images)
-            gridScale = Math.min(2.0, gridScale + 0.1);
-            updateGridScale();
+            if (scaleIndex < scales.length - 1) {
+                scaleIndex++;
+                updateGridScale();
+            }
         });
     }
 
     function updateGridScale() {
         const grid = document.querySelector('.photography-grid');
         if (grid) {
-            grid.style.setProperty('--photo-grid-scale', gridScale);
+            grid.style.setProperty('--photo-grid-scale', scales[scaleIndex]);
         }
     }
 
