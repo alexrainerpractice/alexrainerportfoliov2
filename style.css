@@ -389,7 +389,6 @@ body.profile-about-open .about_me_wrapper {
     grid-template-rows: auto auto;
     width: fit-content;
     justify-items: center;
-    row-gap: 0;
 }
 
 .carousel img {
@@ -402,13 +401,11 @@ body.profile-about-open .about_me_wrapper {
     pointer-events: none;
     user-select: none;
     -webkit-user-drag: none;
-    transition: none !important;
 }
 
 .carousel img.active {
     opacity: 1;
     pointer-events: auto;
-    transition: none !important;
 }
 
 .carousel-counter {
@@ -586,15 +583,12 @@ body.profile-about-open .about_me_wrapper {
 
 
 .carousel-counter {
-    grid-row: 2;
     display: flex;
     justify-content: center;
     align-items: center;
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
-    padding: 0;
-    margin: 0;
 }
 
 .carousel-counter span {
@@ -602,21 +596,10 @@ body.profile-about-open .about_me_wrapper {
     margin: 0 0.15rem;
     opacity: .2;
     transition: padding 0.3s cubic-bezier(.05, .82, .31, .96), opacity 0.2s ease;
-    padding: 0 0.2rem;
+    padding: 0.5rem 0.2rem;
     display: inline-block;
     min-width: 1rem;
     text-align: center;
-    line-height: 1;
-    position: relative;
-}
-
-.carousel-counter span::before {
-    content: '';
-    position: absolute;
-    top: -1rem;
-    bottom: -1rem;
-    left: -0.2rem;
-    right: -0.2rem;
 }
 
 .carousel-counter span.active {
@@ -824,7 +807,7 @@ body.profile-about-open .about_me_wrapper {
         justify-content: center;
         align-items: center;
         padding: 0;
-        margin: 0;
+        margin-top: -0.5rem;
         opacity: 0;
         transition: opacity 0.4s ease;
         z-index: 10;

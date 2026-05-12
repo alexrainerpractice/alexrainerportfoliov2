@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Disable pinch-to-zoom on iOS
+    document.addEventListener('gesturestart', (e) => {
+        e.preventDefault();
+    }, { passive: false });
+
     const body = document.body;
 
     function updateAboutState() {
@@ -309,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentIndexes[carousel.id] = index;
     }
 
-    const SWIPE_STEP = 60; 
+    const SWIPE_STEP = 35;
     let initialX = 0;
     let initialIndex = 0;
     let startTime = 0;
@@ -330,12 +335,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const deltaX = x - initialX;
         const images = currentDraggingCarousel.querySelectorAll('img');
         if (images.length <= 1) return;
-        
-        const steps = Math.trunc(deltaX / SWIPE_STEP);
-        
+
+        const steps = Math.round(deltaX / SWIPE_STEP);
+
         if (steps !== 0) {
-            let newIndex = Math.max(0, Math.min(images.length - 1, initialIndex + steps));
-            
+            let newIndex = (initialIndex + steps) % images.length;
+            if (newIndex < 0) newIndex = images.length + newIndex;
+
             if (newIndex !== currentIndexes[currentDraggingCarousel.id]) {
                 showImage(currentDraggingCarousel, newIndex);
             }
@@ -346,15 +352,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isDragging && currentDraggingCarousel) {
             const dx = endX - initialX;
             const dt = Date.now() - startTime;
-            
+
             if (dt < 250 && Math.abs(dx) > 20) {
                 const images = currentDraggingCarousel.querySelectorAll('img');
-                const steps = Math.trunc(dx / SWIPE_STEP);
-                
+                const steps = Math.round(dx / SWIPE_STEP);
+
                 if (steps === 0) {
                     const direction = dx > 0 ? 1 : -1;
-                    const currentIndex = currentIndexes[currentDraggingCarousel.id];
-                    let newIndex = Math.max(0, Math.min(images.length - 1, currentIndex + direction));
+                    let newIndex = (initialIndex + direction) % images.length;
+                    if (newIndex < 0) newIndex = images.length - 1;
                     showImage(currentDraggingCarousel, newIndex);
                 }
             }
@@ -438,15 +444,25 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!e.target.closest('img') || !e.target.closest('.carousel')) {
-            return;
+        let targetCarousel = e.target.closest('.carousel');
+        if (!targetCarousel) {
+            targetCarousel = activeCarousel;
         }
 
-        let targetCarousel = e.target.closest('.carousel');
         if (!targetCarousel) return;
 
-        // We are removing the side-click navigation to avoid accidental jumps
-        // Clicks on images will no longer trigger navigation
+        const images = targetCarousel.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        const currentIndex = currentIndexes[targetCarousel.id];
+        if (e.clientX < window.innerWidth / 2) {
+            let newIndex = currentIndex - 1;
+            if (newIndex < 0) newIndex = images.length - 1;
+            showImage(targetCarousel, newIndex);
+        } else {
+            let newIndex = (currentIndex + 1) % images.length;
+            showImage(targetCarousel, newIndex);
+        }
     });
 
 
@@ -479,16 +495,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize counter dots interactivity and touch handlers
     carousels.forEach(carousel => {
         carousel.addEventListener('touchstart', (e) => {
-            const isCounter = e.target.closest('.carousel-counter');
-            if (isCounter) {
-                isDragging = false;
-                return;
-            }
-
             isDragging = true;
             dragDirection = null;
             currentDraggingCarousel = carousel;
-            
+
             const touch = e.touches[0];
             initialX = touch.clientX;
             startX = touch.clientX;
@@ -531,20 +541,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const counter = carousel.querySelector('.carousel-counter');
         if (counter) {
-            const handleCounterTap = (e) => {
+            counter.addEventListener('click', (e) => {
                 const span = e.target.closest('span');
                 if (span) {
-                    e.stopPropagation();
                     const spans = Array.from(counter.querySelectorAll('span'));
                     const index = spans.indexOf(span);
                     if (index !== -1) {
                         showImage(carousel, index);
                     }
                 }
-            };
-
-            counter.addEventListener('click', handleCounterTap);
-            counter.addEventListener('touchstart', handleCounterTap, { passive: true });
+            });
         }
     });
 });
