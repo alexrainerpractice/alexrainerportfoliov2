@@ -123,13 +123,13 @@ body.profile-about-open .about_project {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    width: calc(100vw - 0.5rem);
+    width: fit-content;
     box-sizing: border-box;
 }
 
 .nav-row {
     display: flex;
-    width: 100%;
+    width: fit-content;
     gap: 0.25rem;
 }
 
@@ -142,11 +142,11 @@ body.profile-about-open .about_project {
     align-items: center;
     justify-content: center;
     height: 1.5rem;
+    width: fit-content;
 }
 
 .nav-row .nav-item {
-    flex: 1;
-    text-align: center;
+    flex: none;
 }
 
 .photography-controls {
@@ -853,6 +853,11 @@ body.profile-about-open .about_me_wrapper {
         display: flex;
         width: 100%;
         gap: 0.25rem;
+    }
+
+    .nav-row .nav-item {
+        flex: 1;
+        text-align: center;
     }
 
     .nav-item {
