@@ -334,8 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const steps = Math.round(deltaX / SWIPE_STEP);
         
         if (steps !== 0) {
-            let newIndex = (initialIndex + steps) % images.length;
-            if (newIndex < 0) newIndex = images.length + newIndex;
+            let newIndex = Math.max(0, Math.min(images.length - 1, initialIndex + steps));
             
             if (newIndex !== currentIndexes[currentDraggingCarousel.id]) {
                 showImage(currentDraggingCarousel, newIndex);
@@ -354,8 +353,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (steps === 0) {
                     const direction = dx > 0 ? 1 : -1;
-                    let newIndex = (initialIndex + direction) % images.length;
-                    if (newIndex < 0) newIndex = images.length - 1;
+                    const currentIndex = currentIndexes[currentDraggingCarousel.id];
+                    let newIndex = Math.max(0, Math.min(images.length - 1, currentIndex + direction));
                     showImage(currentDraggingCarousel, newIndex);
                 }
             }
@@ -451,11 +450,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const currentIndex = currentIndexes[targetCarousel.id];
         if (e.clientX < window.innerWidth / 2) {
-            let newIndex = currentIndex - 1;
-            if (newIndex < 0) newIndex = images.length - 1;
+            let newIndex = Math.max(0, currentIndex - 1);
             showImage(targetCarousel, newIndex);
         } else {
-            let newIndex = (currentIndex + 1) % images.length;
+            let newIndex = Math.min(images.length - 1, currentIndex + 1);
             showImage(targetCarousel, newIndex);
         }
     });
