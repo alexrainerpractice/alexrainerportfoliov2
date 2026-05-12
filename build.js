@@ -87,8 +87,10 @@ async function build() {
 
                 projectLinksHTML += `
                         <li ${isFirst ? 'class="active"' : ''} data-project="${projId}">
-                            <span class="project_number">${i + 1}</span>
-                            <span class="project_title">${displayTitle}</span>
+                            <span class="title-wrapper">
+                                <span class="project_number">${i + 1}</span>
+                                <span class="project_title">${displayTitle}</span>
+                            </span>
                             <span class="about_button">?</span>
                             <span class="about_project">${description}</span>
                         </li>`;

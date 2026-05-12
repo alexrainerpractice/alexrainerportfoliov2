@@ -1,4 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Disable pinch-to-zoom on iOS
+    document.addEventListener('gesturestart', (e) => {
+        e.preventDefault();
+    }, { passive: false });
+
+    // Disable double-tap to zoom on iOS
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (e) => {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            e.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, { passive: false });
+
     const body = document.body;
 
     function updateAboutState() {
@@ -30,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (toggleEditorial && togglePhotography) {
         toggleEditorial.addEventListener('click', () => {
-
+            document.body.classList.remove('photography-active');
             const overlay = document.querySelector('.fullscreen-overlay');
             if (overlay) {
                 window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
@@ -48,7 +63,35 @@ document.addEventListener('DOMContentLoaded', () => {
             editorialList.style.display = 'none';
             photographyView.style.display = 'block';
             if (middleWrapper) middleWrapper.style.display = 'none';
+            document.body.classList.add('photography-active');
         });
+    }
+
+    const gridDecrease = document.getElementById('grid-decrease');
+    const gridIncrease = document.getElementById('grid-increase');
+    const scales = [0.6, 1.0, 1.6]; // Small, Medium, Big
+    let scaleIndex = 0; // Default to Smallest
+
+    if (gridDecrease && gridIncrease) {
+        gridDecrease.addEventListener('click', () => {
+            if (scaleIndex > 0) {
+                scaleIndex--;
+                updateGridScale();
+            }
+        });
+        gridIncrease.addEventListener('click', () => {
+            if (scaleIndex < scales.length - 1) {
+                scaleIndex++;
+                updateGridScale();
+            }
+        });
+    }
+
+    function updateGridScale() {
+        const grid = document.querySelector('.photography-grid');
+        if (grid) {
+            grid.style.setProperty('--photo-grid-scale', scales[scaleIndex]);
+        }
     }
 
 
@@ -80,17 +123,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentBtn = document.createElement('span');
         currentBtn.className = 'current-num';
 
-        const closeBtn = document.createElement('span');
-        closeBtn.className = 'fullscreen-close';
-        closeBtn.textContent = 'Close';
-
         overlay.appendChild(leftGutter);
         overlay.appendChild(fullImg);
         overlay.appendChild(rightGutter);
         overlay.appendChild(currentBtn);
-        overlay.appendChild(closeBtn);
 
         document.body.appendChild(overlay);
+        document.body.classList.add('is-fullscreen-open');
+
+        const gridClose = document.getElementById('grid-close');
+        if (gridClose) {
+            gridClose.addEventListener('click', closeFullscreen, { once: true });
+        }
 
 
         leftGutter.addEventListener('click', (e) => {
@@ -101,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateFullscreenView(currentIndex + 1);
         });
 
-        closeBtn.addEventListener('click', closeFullscreen);
+
 
 
         let targetX = 50, targetY = 50;
@@ -109,8 +153,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let rafId = null;
 
         function updatePan() {
-            currentX += (targetX - currentX) * 0.1;
-            currentY += (targetY - currentY) * 0.1;
+            currentX += (targetX - currentX) * 0.25;
+            currentY += (targetY - currentY) * 0.25;
             fullImg.style.transformOrigin = `${currentX.toFixed(2)}% ${currentY.toFixed(2)}%`;
 
             if (fullImg.classList.contains('zoomed')) {
@@ -124,6 +168,12 @@ document.addEventListener('DOMContentLoaded', () => {
             currentIndex = index;
             const targetImg = allPhotos[currentIndex];
             fullImg.src = targetImg.src;
+            
+            // Detect orientation for adaptive zoom
+            const isHorizontal = targetImg.naturalWidth > targetImg.naturalHeight;
+            fullImg.classList.toggle('is-horizontal', isHorizontal);
+            fullImg.classList.toggle('is-vertical', !isHorizontal);
+
             fullImg.classList.remove('zoomed');
             overlay.classList.remove('is-zoomed');
             if (rafId) cancelAnimationFrame(rafId);
@@ -162,6 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
         function closeFullscreen() {
             window.removeEventListener('keydown', handleKeys);
             if (rafId) cancelAnimationFrame(rafId);
+            document.body.classList.remove('is-fullscreen-zoomed');
+            document.body.classList.remove('is-fullscreen-open');
             overlay.remove();
         }
 
@@ -178,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const wasZoomed = fullImg.classList.contains('zoomed');
             fullImg.classList.toggle('zoomed');
             overlay.classList.toggle('is-zoomed');
+            document.body.classList.toggle('is-fullscreen-zoomed', overlay.classList.contains('is-zoomed'));
 
             if (!wasZoomed) {
                 rafId = requestAnimationFrame(updatePan);
@@ -202,6 +255,37 @@ document.addEventListener('DOMContentLoaded', () => {
         let lastX = 50, lastY = 50;
         let lastTap = 0;
 
+        let isOverlayDragging = false;
+        let overlayStartX = 0;
+        let overlayInitialIndex = 0;
+
+        overlay.addEventListener('touchstart', (e) => {
+            if (fullImg.classList.contains('zoomed')) return;
+            isOverlayDragging = true;
+            overlayStartX = e.touches[0].clientX;
+            overlayInitialIndex = currentIndex;
+        }, { passive: true });
+
+        overlay.addEventListener('touchmove', (e) => {
+            if (!isOverlayDragging || fullImg.classList.contains('zoomed')) return;
+            const x = e.touches[0].clientX;
+            const deltaX = x - overlayStartX;
+            const steps = Math.round(deltaX / SWIPE_STEP);
+            
+            if (steps !== 0) {
+                let newIndex = (overlayInitialIndex + steps) % allPhotos.length;
+                if (newIndex < 0) newIndex = allPhotos.length + newIndex;
+                
+                if (newIndex !== currentIndex) {
+                    updateFullscreenView(newIndex);
+                }
+            }
+        }, { passive: false });
+
+        overlay.addEventListener('touchend', () => {
+            isOverlayDragging = false;
+        });
+
         fullImg.addEventListener('touchstart', (e) => {
             if (fullImg.classList.contains('zoomed') && e.touches.length === 1) {
                 startX = e.touches[0].clientX;
@@ -218,8 +302,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const deltaY = e.touches[0].clientY - startY;
 
                 // Sensitivity adjustment
-                targetX = lastX - (deltaX / window.innerWidth * 50);
-                targetY = lastY - (deltaY / window.innerHeight * 50);
+                targetX = lastX - (deltaX / window.innerWidth * 80);
+                targetY = lastY - (deltaY / window.innerHeight * 80);
 
                 targetX = Math.max(0, Math.min(100, targetX));
                 targetY = Math.max(0, Math.min(100, targetY));
@@ -234,6 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const wasZoomed = fullImg.classList.contains('zoomed');
                 fullImg.classList.toggle('zoomed');
                 overlay.classList.toggle('is-zoomed');
+                document.body.classList.toggle('is-fullscreen-zoomed', overlay.classList.contains('is-zoomed'));
                 if (!wasZoomed) {
                     rafId = requestAnimationFrame(updatePan);
                 } else {
@@ -308,6 +393,61 @@ document.addEventListener('DOMContentLoaded', () => {
         if (spans[index]) spans[index].classList.add('active');
         currentIndexes[carousel.id] = index;
     }
+
+    const SWIPE_STEP = 35; 
+    let initialX = 0;
+    let initialIndex = 0;
+    let startTime = 0;
+
+    const handleDragStart = (x, y, carousel) => {
+        isDragging = true;
+        startX = x;
+        startY = y;
+        initialX = x;
+        startTime = Date.now();
+        initialIndex = currentIndexes[carousel.id] || 0;
+        currentDraggingCarousel = carousel;
+    };
+
+    const handleDragMove = (x, y, isTouch = false) => {
+        if (!isDragging || !currentDraggingCarousel) return;
+
+        const deltaX = x - initialX;
+        const images = currentDraggingCarousel.querySelectorAll('img');
+        if (images.length <= 1) return;
+        
+        const steps = Math.round(deltaX / SWIPE_STEP);
+        
+        if (steps !== 0) {
+            let newIndex = (initialIndex + steps) % images.length;
+            if (newIndex < 0) newIndex = images.length + newIndex;
+            
+            if (newIndex !== currentIndexes[currentDraggingCarousel.id]) {
+                showImage(currentDraggingCarousel, newIndex);
+            }
+        }
+    };
+
+    const handleDragEnd = (endX) => {
+        if (isDragging && currentDraggingCarousel) {
+            const dx = endX - initialX;
+            const dt = Date.now() - startTime;
+            
+            if (dt < 250 && Math.abs(dx) > 20) {
+                const images = currentDraggingCarousel.querySelectorAll('img');
+                const steps = Math.round(dx / SWIPE_STEP);
+                
+                if (steps === 0) {
+                    const direction = dx > 0 ? 1 : -1;
+                    let newIndex = (initialIndex + direction) % images.length;
+                    if (newIndex < 0) newIndex = images.length - 1;
+                    showImage(currentDraggingCarousel, newIndex);
+                }
+            }
+        }
+        isDragging = false;
+        currentDraggingCarousel = null;
+    };
 
     const observerOptions = {
         threshold: 0.7
@@ -384,11 +524,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        let targetCarousel = e.target.closest('.carousel');
-        if (!targetCarousel) {
-            targetCarousel = activeCarousel;
+        if (!e.target.closest('.carousel')) {
+            return;
         }
 
+        let targetCarousel = e.target.closest('.carousel');
         if (!targetCarousel) return;
 
         const images = targetCarousel.querySelectorAll('img');
@@ -406,53 +546,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    let isDragging = false;
-    let startX = 0;
-    let currentDraggingCarousel = null;
-    const DRAG_THRESHOLD = 50;
-
-    const handleDragStart = (x, carousel) => {
-        isDragging = true;
-        startX = x;
-        currentDraggingCarousel = carousel;
-    };
-
-    const handleDragMove = (x) => {
-        if (!isDragging || !currentDraggingCarousel) return;
-
-        const deltaX = x - startX;
-        const images = currentDraggingCarousel.querySelectorAll('img');
-        const currentIndex = currentIndexes[currentDraggingCarousel.id];
-
-        if (deltaX > DRAG_THRESHOLD) {
-            // Dragged Right -> Previous Image
-            let newIndex = currentIndex - 1;
-            if (newIndex < 0) newIndex = images.length - 1;
-            showImage(currentDraggingCarousel, newIndex);
-            startX = x;
-        } else if (deltaX < -DRAG_THRESHOLD) {
-            // Dragged Left -> Next Image
-            let newIndex = (currentIndex + 1) % images.length;
-            showImage(currentDraggingCarousel, newIndex);
-            startX = x;
-        }
-    };
-
-    const handleDragEnd = () => {
-        isDragging = false;
-        currentDraggingCarousel = null;
-    };
-
-
     document.addEventListener('mousedown', (e) => {
         const carousel = e.target.closest('.carousel');
-        if (carousel) handleDragStart(e.clientX, carousel);
+        if (carousel) handleDragStart(e.clientX, e.clientY, carousel);
     });
 
     document.addEventListener('mousemove', (e) => {
         const carousel = e.target.closest('.carousel');
         if (carousel) {
-
             if (e.clientX < window.innerWidth / 2) {
                 carousel.classList.add('cursor-prev');
                 carousel.classList.remove('cursor-next');
@@ -461,27 +562,85 @@ document.addEventListener('DOMContentLoaded', () => {
                 carousel.classList.remove('cursor-prev');
             }
         }
-
         if (isDragging) {
-            handleDragMove(e.clientX);
+            handleDragMove(e.clientX, e.clientY);
         }
     });
 
-    document.addEventListener('mouseup', handleDragEnd);
-    document.addEventListener('mouseleave', handleDragEnd);
+    document.addEventListener('mouseup', (e) => handleDragEnd(e.clientX));
+    document.addEventListener('mouseleave', (e) => handleDragEnd(e.clientX));
 
+    let dragDirection = null;
 
-    document.addEventListener('touchstart', (e) => {
-        const carousel = e.target.closest('.carousel');
-        if (carousel) handleDragStart(e.touches[0].clientX, carousel);
-    }, { passive: true });
+    // Initialize counter dots interactivity and touch handlers
+    carousels.forEach(carousel => {
+        carousel.addEventListener('touchstart', (e) => {
+            const isCounter = e.target.closest('.carousel-counter');
+            if (isCounter) {
+                isDragging = false;
+                return;
+            }
 
-    document.addEventListener('touchmove', (e) => {
-        if (isDragging) {
-            handleDragMove(e.touches[0].clientX);
+            isDragging = true;
+            dragDirection = null;
+            currentDraggingCarousel = carousel;
+            
+            const touch = e.touches[0];
+            initialX = touch.clientX;
+            startX = touch.clientX;
+            startY = touch.clientY;
+            startTime = Date.now();
+            initialIndex = currentIndexes[carousel.id] || 0;
+        }, { passive: true });
+
+        carousel.addEventListener('touchmove', (e) => {
+            if (!isDragging || currentDraggingCarousel !== carousel) return;
+
+            const touch = e.touches[0];
+            const x = touch.clientX;
+            const y = touch.clientY;
+            const dx = x - initialX;
+            const dy = y - startY;
+
+            if (!dragDirection) {
+                if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                    dragDirection = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+                }
+            }
+
+            if (dragDirection === 'h') {
+                if (e.cancelable) e.preventDefault();
+                handleDragMove(x, y, true);
+            }
+        }, { passive: false });
+
+        carousel.addEventListener('touchend', (e) => {
+            const x = e.changedTouches ? e.changedTouches[0].clientX : initialX;
+            handleDragEnd(x);
+            dragDirection = null;
+        }, { passive: true });
+
+        carousel.addEventListener('touchcancel', (e) => {
+            handleDragEnd(initialX);
+            dragDirection = null;
+        }, { passive: true });
+
+        const counter = carousel.querySelector('.carousel-counter');
+        if (counter) {
+            const handleCounterTap = (e) => {
+                const span = e.target.closest('span');
+                if (span) {
+                    e.stopPropagation();
+                    const spans = Array.from(counter.querySelectorAll('span'));
+                    const index = spans.indexOf(span);
+                    if (index !== -1) {
+                        showImage(carousel, index);
+                    }
+                }
+            };
+
+            counter.addEventListener('click', handleCounterTap);
+            counter.addEventListener('touchstart', handleCounterTap, { passive: true });
         }
-    }, { passive: true });
-
-    document.addEventListener('touchend', handleDragEnd);
-    document.addEventListener('touchcancel', handleDragEnd);
+    });
 });
