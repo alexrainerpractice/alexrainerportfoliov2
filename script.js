@@ -217,6 +217,37 @@ document.addEventListener('DOMContentLoaded', () => {
         let lastX = 50, lastY = 50;
         let lastTap = 0;
 
+        let isOverlayDragging = false;
+        let overlayStartX = 0;
+        let overlayInitialIndex = 0;
+
+        overlay.addEventListener('touchstart', (e) => {
+            if (fullImg.classList.contains('zoomed')) return;
+            isOverlayDragging = true;
+            overlayStartX = e.touches[0].clientX;
+            overlayInitialIndex = currentIndex;
+        }, { passive: true });
+
+        overlay.addEventListener('touchmove', (e) => {
+            if (!isOverlayDragging || fullImg.classList.contains('zoomed')) return;
+            const x = e.touches[0].clientX;
+            const deltaX = x - overlayStartX;
+            const steps = Math.round(deltaX / SWIPE_STEP);
+            
+            if (steps !== 0) {
+                let newIndex = (overlayInitialIndex + steps) % allPhotos.length;
+                if (newIndex < 0) newIndex = allPhotos.length + newIndex;
+                
+                if (newIndex !== currentIndex) {
+                    updateFullscreenView(newIndex);
+                }
+            }
+        }, { passive: false });
+
+        overlay.addEventListener('touchend', () => {
+            isOverlayDragging = false;
+        });
+
         fullImg.addEventListener('touchstart', (e) => {
             if (fullImg.classList.contains('zoomed') && e.touches.length === 1) {
                 startX = e.touches[0].clientX;
