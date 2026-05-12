@@ -79,6 +79,10 @@ body.is-fullscreen-zoomed .profile-metadata .right-wrapper>* {
     opacity: 0.35;
 }
 
+body.is-fullscreen-zoomed #grid-close {
+    opacity: 1 !important;
+}
+
 @media (min-width: 769px) {
 
     body.is-fullscreen-zoomed .left-wrapper,
@@ -135,9 +139,9 @@ body.profile-about-open .about_project {
     cursor: pointer;
     background: white;
     padding: 0 0.25rem;
-    transition: background 0.25s cubic-bezier(.05, .82, .31, .96), 
-                color 0.25s cubic-bezier(.05, .82, .31, .96), 
-                transform 0.4s cubic-bezier(.05, .82, .31, .96);
+    transition: background 0.25s cubic-bezier(.05, .82, .31, .96),
+        color 0.25s cubic-bezier(.05, .82, .31, .96),
+        transform 0.4s cubic-bezier(.05, .82, .31, .96);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -158,10 +162,12 @@ body.photography-active .photography-controls {
 }
 
 #grid-decrease {
-    padding-bottom: 0.15rem !important; /* Visual alignment for en-dash */
+    padding-bottom: 0.15rem !important;
+    /* Visual alignment for en-dash */
 }
 
 @media (min-width: 769px) {
+
     .about_button,
     .photography-controls {
         width: 1.5rem !important;
@@ -176,6 +182,13 @@ body.photography-active .photography-controls {
 body.is-fullscreen-open #grid-close {
     display: inline-flex !important;
     padding: 0 0.25rem !important;
+}
+
+@media (max-width: 768px) {
+    body.is-fullscreen-open #grid-close {
+        width: 2rem !important;
+        padding: 0 !important;
+    }
 }
 
 @media (min-width: 769px) {
@@ -1161,9 +1174,23 @@ body.profile-about-open .about_me_wrapper {
     }
 
     /* Rhythmic variation */
-    .photo-item:nth-child(1) { --base-w: 25%; }
-    .photo-item:nth-child(2) { --base-w: 35%; }
-    .photo-item:nth-child(3) { --base-w: 40%; }
-    .photo-item:nth-child(6) { --base-w: 20%; }
-    .photo-item:nth-child(8) { --base-w: 80%; }
+    .photo-item:nth-child(1) {
+        --base-w: 25%;
+    }
+
+    .photo-item:nth-child(2) {
+        --base-w: 35%;
+    }
+
+    .photo-item:nth-child(3) {
+        --base-w: 40%;
+    }
+
+    .photo-item:nth-child(6) {
+        --base-w: 20%;
+    }
+
+    .photo-item:nth-child(8) {
+        --base-w: 80%;
+    }
 }
