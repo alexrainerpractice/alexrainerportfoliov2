@@ -1,9 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Disable pinch-to-zoom on iOS
-    document.addEventListener('gesturestart', (e) => {
-        e.preventDefault();
-    }, { passive: false });
-
     const body = document.body;
 
     function updateAboutState() {
@@ -314,44 +309,58 @@ document.addEventListener('DOMContentLoaded', () => {
         currentIndexes[carousel.id] = index;
     }
 
-    let isDragging = false;
-    let currentDraggingCarousel = null;
+    const SWIPE_STEP = 35; 
     let initialX = 0;
-    let startY = 0;
-    let hasChangedInThisSwipe = false;
-    const SWIPE_THRESHOLD = 30;
+    let initialIndex = 0;
+    let startTime = 0;
 
     const handleDragStart = (x, y, carousel) => {
         isDragging = true;
-        initialX = x;
+        startX = x;
         startY = y;
-        hasChangedInThisSwipe = false;
+        initialX = x;
+        startTime = Date.now();
+        initialIndex = currentIndexes[carousel.id] || 0;
         currentDraggingCarousel = carousel;
     };
 
     const handleDragMove = (x, y, isTouch = false) => {
-        if (!isDragging || !currentDraggingCarousel || hasChangedInThisSwipe) return;
+        if (!isDragging || !currentDraggingCarousel) return;
 
         const deltaX = x - initialX;
         const images = currentDraggingCarousel.querySelectorAll('img');
         if (images.length <= 1) return;
-
-        if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
-            const currentIndex = currentIndexes[currentDraggingCarousel.id];
-            const direction = deltaX > 0 ? 1 : -1;
+        
+        const steps = Math.round(deltaX / SWIPE_STEP);
+        
+        if (steps !== 0) {
+            let newIndex = (initialIndex + steps) % images.length;
+            if (newIndex < 0) newIndex = images.length + newIndex;
             
-            let newIndex = Math.max(0, Math.min(images.length - 1, currentIndex + direction));
-            
-            if (newIndex !== currentIndex) {
+            if (newIndex !== currentIndexes[currentDraggingCarousel.id]) {
                 showImage(currentDraggingCarousel, newIndex);
-                hasChangedInThisSwipe = true;
             }
         }
     };
 
-    const handleDragEnd = () => {
+    const handleDragEnd = (endX) => {
+        if (isDragging && currentDraggingCarousel) {
+            const dx = endX - initialX;
+            const dt = Date.now() - startTime;
+            
+            if (dt < 250 && Math.abs(dx) > 20) {
+                const images = currentDraggingCarousel.querySelectorAll('img');
+                const steps = Math.round(dx / SWIPE_STEP);
+                
+                if (steps === 0) {
+                    const direction = dx > 0 ? 1 : -1;
+                    let newIndex = (initialIndex + direction) % images.length;
+                    if (newIndex < 0) newIndex = images.length - 1;
+                    showImage(currentDraggingCarousel, newIndex);
+                }
+            }
+        }
         isDragging = false;
-        hasChangedInThisSwipe = false;
         currentDraggingCarousel = null;
     };
 
@@ -430,11 +439,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        let targetCarousel = e.target.closest('.carousel');
-        if (!targetCarousel) {
-            targetCarousel = activeCarousel;
+        if (!e.target.closest('img') || !e.target.closest('.carousel')) {
+            return;
         }
 
+        let targetCarousel = e.target.closest('.carousel');
         if (!targetCarousel) return;
 
         const images = targetCarousel.querySelectorAll('img');
@@ -487,12 +496,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            isDragging = true;
+            dragDirection = null;
+            currentDraggingCarousel = carousel;
+            
             const touch = e.touches[0];
-            handleDragStart(touch.clientX, touch.clientY, carousel);
+            initialX = touch.clientX;
+            startX = touch.clientX;
+            startY = touch.clientY;
+            startTime = Date.now();
+            initialIndex = currentIndexes[carousel.id] || 0;
         }, { passive: true });
 
         carousel.addEventListener('touchmove', (e) => {
-            if (!isDragging || currentDraggingCarousel !== carousel || hasChangedInThisSwipe) return;
+            if (!isDragging || currentDraggingCarousel !== carousel) return;
 
             const touch = e.touches[0];
             const x = touch.clientX;
@@ -513,12 +530,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { passive: false });
 
         carousel.addEventListener('touchend', (e) => {
-            handleDragEnd();
+            const x = e.changedTouches ? e.changedTouches[0].clientX : initialX;
+            handleDragEnd(x);
             dragDirection = null;
         }, { passive: true });
 
         carousel.addEventListener('touchcancel', (e) => {
-            handleDragEnd();
+            handleDragEnd(initialX);
             dragDirection = null;
         }, { passive: true });
 
