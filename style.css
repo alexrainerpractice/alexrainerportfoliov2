@@ -428,7 +428,7 @@ body.profile-about-open .about_me_wrapper {
     opacity: 0;
     max-height: 0;
     overflow: hidden;
-    transition: margin-top 0.5s ease, max-height 0.5s ease;
+    transition: margin-top 0.25s ease, max-height 0.25s ease;
     pointer-events: none;
 }
 
@@ -607,7 +607,7 @@ body.profile-about-open .about_me_wrapper {
 .carousel-counter span {
     cursor: pointer;
     margin: 0 0.15rem;
-    opacity: 0.35;
+    opacity: 0.15;
     transition: padding 0.3s cubic-bezier(.05, .82, .31, .96), opacity 0.2s ease;
     padding: 0.5rem 0.2rem;
     display: inline-block;
