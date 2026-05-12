@@ -379,6 +379,7 @@ body.profile-about-open .about_me_wrapper {
     justify-content: center;
     width: 100%;
     margin-bottom: 0;
+    touch-action: pan-y;
 }
 
 .carousel-inner {

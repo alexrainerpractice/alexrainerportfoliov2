@@ -474,11 +474,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('touchstart', (e) => {
         const carousel = e.target.closest('.carousel');
-        if (carousel) handleDragStart(e.touches[0].clientX, e.touches[0].clientY, carousel);
-    }, { passive: true });
+        if (carousel) {
+            isDragging = false; // Reset first to be sure
+            handleDragStart(e.touches[0].clientX, e.touches[0].clientY, carousel);
+        }
+    }, { passive: false });
 
     document.addEventListener('touchmove', (e) => {
-        if (isDragging) {
+        if (isDragging && currentDraggingCarousel) {
             const x = e.touches[0].clientX;
             const y = e.touches[0].clientY;
             const deltaX = Math.abs(x - startX);
@@ -486,14 +489,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (deltaX > deltaY) {
                 if (e.cancelable) e.preventDefault();
+                handleDragMove(x, y, true);
             }
-
-            handleDragMove(x, y, true);
         }
     }, { passive: false });
 
-    document.addEventListener('touchend', handleDragEnd);
-    document.addEventListener('touchcancel', handleDragEnd);
+    const clearDrag = (e) => {
+        handleDragEnd();
+    };
+
+    document.addEventListener('touchend', clearDrag, { passive: true });
+    document.addEventListener('touchcancel', clearDrag, { passive: true });
 
     // Initialize counter dots interactivity
     carousels.forEach(carousel => {
