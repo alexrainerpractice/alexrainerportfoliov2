@@ -65,6 +65,13 @@ a:not(.socials a):not(.home-link a):not(.nav-item a):not(.project_title a)::afte
     display: none;
 }
 
+body.profile-about-open .left-wrapper .about_button {
+    transform: rotate(180deg) !important;
+    background: black !important;
+    color: white !important;
+    -webkit-text-stroke: 0.015rem white !important;
+}
+
 body.is-fullscreen-open {
     overflow: hidden;
 }
@@ -207,12 +214,7 @@ body.is-fullscreen-open #grid-increase {
 }
 }
 
-body.profile-about-open .about_button {
-    transform: rotate(180deg) !important;
-    background: black !important;
-    color: white !important;
-    -webkit-text-stroke: 0.015rem white !important;
-}
+
 
 .nav-item.active {
     background: black;
