@@ -205,6 +205,10 @@ body.is-fullscreen-open #grid-close {
         left: 50%;
         transform: translateX(-50%);
         z-index: 100;
+        width: fit-content !important;
+        background: white !important;
+        padding: 0 0.25rem !important;
+        white-space: nowrap;
     }
 }
 
