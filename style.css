@@ -70,6 +70,7 @@ body.profile-about-open .left-wrapper .about_button {
     background: black !important;
     color: white !important;
     -webkit-text-stroke: 0.015rem white !important;
+    opacity: 1 !important;
 }
 
 body.is-fullscreen-open {
