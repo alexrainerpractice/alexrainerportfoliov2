@@ -284,12 +284,12 @@ body.profile-about-open .about_me_wrapper {
         transform: none;
     }
 
-    .project_nav li .title-wrapper,
-    .project_nav li .about_button {
+    .project_nav li.active .title-wrapper,
+    .project_nav li.active .about_button {
         border: 0.5px solid black;
     }
 
-    .project_nav li .about_project.show {
+    .project_nav li.active .about_project.show {
         border: 0.5px solid black;
         border-top: none;
     }
