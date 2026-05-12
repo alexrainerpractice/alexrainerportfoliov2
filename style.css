@@ -58,6 +58,17 @@ a:not(.socials a)::after {
     display: none;
 }
 
+.left-wrapper,
+.profile-metadata .right-wrapper {
+    transition: opacity 0.4s cubic-bezier(.05, .82, .31, .96);
+}
+
+body.is-fullscreen-zoomed .left-wrapper,
+body.is-fullscreen-zoomed .profile-metadata .right-wrapper {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
 body.profile-about-open .profile-metadata {
     display: block;
 }

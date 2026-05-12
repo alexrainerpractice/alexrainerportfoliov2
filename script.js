@@ -177,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function closeFullscreen() {
             window.removeEventListener('keydown', handleKeys);
             if (rafId) cancelAnimationFrame(rafId);
+            document.body.classList.remove('is-fullscreen-zoomed');
             overlay.remove();
         }
 
@@ -193,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const wasZoomed = fullImg.classList.contains('zoomed');
             fullImg.classList.toggle('zoomed');
             overlay.classList.toggle('is-zoomed');
+            document.body.classList.toggle('is-fullscreen-zoomed', overlay.classList.contains('is-zoomed'));
 
             if (!wasZoomed) {
                 rafId = requestAnimationFrame(updatePan);
@@ -280,6 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const wasZoomed = fullImg.classList.contains('zoomed');
                 fullImg.classList.toggle('zoomed');
                 overlay.classList.toggle('is-zoomed');
+                document.body.classList.toggle('is-fullscreen-zoomed', overlay.classList.contains('is-zoomed'));
                 if (!wasZoomed) {
                     rafId = requestAnimationFrame(updatePan);
                 } else {
