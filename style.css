@@ -67,10 +67,9 @@ body.is-fullscreen-open {
     transition: opacity 0.4s cubic-bezier(.05, .82, .31, .96);
 }
 
-body.is-fullscreen-zoomed .left-wrapper,
-body.is-fullscreen-zoomed .profile-metadata .right-wrapper {
+body.is-fullscreen-zoomed .left-wrapper > *,
+body.is-fullscreen-zoomed .profile-metadata .right-wrapper > * {
     opacity: 0.35;
-    pointer-events: none;
 }
 
 @media (min-width: 769px) {
@@ -79,8 +78,8 @@ body.is-fullscreen-zoomed .profile-metadata .right-wrapper {
         pointer-events: auto;
     }
 
-    body.is-fullscreen-zoomed .left-wrapper:hover,
-    body.is-fullscreen-zoomed .profile-metadata .right-wrapper:hover {
+    body.is-fullscreen-zoomed .left-wrapper > *:hover,
+    body.is-fullscreen-zoomed .profile-metadata .right-wrapper > *:hover {
         opacity: 1;
     }
 }
@@ -135,12 +134,25 @@ body.profile-about-open .navigation .about_button {
 }
 
 .nav-item:hover,
-.nav-item:active {
+.nav-item:active,
+.nav-item.active {
+    background: black;
+    color: white;
+    -webkit-text-stroke: 0.015rem white;
     padding-left: 0.5rem;
 }
 
 .home-link {
     padding-left: 0.25rem;
+    transition: all 0.25s cubic-bezier(.05, .82, .31, .96);
+    width: fit-content;
+}
+
+.home-link:hover,
+.home-link:active {
+    background: black;
+    color: white;
+    -webkit-text-stroke: 0.015rem white;
 }
 
 .home-link h1 {
