@@ -178,7 +178,7 @@ body.photography-active .photography-controls {
 
     .about_button,
     .photography-controls {
-        width: 1.5rem !important;
+        width: 2rem !important;
         padding: 0 !important;
     }
 }
@@ -434,7 +434,7 @@ body.profile-about-open .about_me_wrapper {
 .project_nav li .about_button {
     opacity: 0;
     background: white;
-    width: 3rem;
+    width: 2rem;
     text-align: center;
     display: inline-block;
     transition: opacity 0.25s cubic-bezier(.05, .82, .31, .96), transform 0.4s cubic-bezier(.05, .82, .31, .96);
