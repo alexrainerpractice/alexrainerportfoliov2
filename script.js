@@ -314,58 +314,40 @@ document.addEventListener('DOMContentLoaded', () => {
         currentIndexes[carousel.id] = index;
     }
 
-    const SWIPE_STEP = 35;
-    let initialX = 0;
-    let initialIndex = 0;
-    let startTime = 0;
+    let hasChangedInThisSwipe = false;
+    const SWIPE_THRESHOLD = 30;
 
     const handleDragStart = (x, y, carousel) => {
         isDragging = true;
-        startX = x;
-        startY = y;
         initialX = x;
-        startTime = Date.now();
-        initialIndex = currentIndexes[carousel.id] || 0;
+        startY = y;
+        hasChangedInThisSwipe = false;
         currentDraggingCarousel = carousel;
     };
 
     const handleDragMove = (x, y, isTouch = false) => {
-        if (!isDragging || !currentDraggingCarousel) return;
+        if (!isDragging || !currentDraggingCarousel || hasChangedInThisSwipe) return;
 
         const deltaX = x - initialX;
         const images = currentDraggingCarousel.querySelectorAll('img');
         if (images.length <= 1) return;
 
-        const steps = Math.round(deltaX / SWIPE_STEP);
-
-        if (steps !== 0) {
-            let newIndex = (initialIndex + steps) % images.length;
-            if (newIndex < 0) newIndex = images.length + newIndex;
-
-            if (newIndex !== currentIndexes[currentDraggingCarousel.id]) {
+        if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
+            const currentIndex = currentIndexes[currentDraggingCarousel.id];
+            const direction = deltaX > 0 ? 1 : -1;
+            
+            let newIndex = Math.max(0, Math.min(images.length - 1, currentIndex + direction));
+            
+            if (newIndex !== currentIndex) {
                 showImage(currentDraggingCarousel, newIndex);
+                hasChangedInThisSwipe = true;
             }
         }
     };
 
-    const handleDragEnd = (endX) => {
-        if (isDragging && currentDraggingCarousel) {
-            const dx = endX - initialX;
-            const dt = Date.now() - startTime;
-
-            if (dt < 250 && Math.abs(dx) > 20) {
-                const images = currentDraggingCarousel.querySelectorAll('img');
-                const steps = Math.round(dx / SWIPE_STEP);
-
-                if (steps === 0) {
-                    const direction = dx > 0 ? 1 : -1;
-                    let newIndex = (initialIndex + direction) % images.length;
-                    if (newIndex < 0) newIndex = images.length - 1;
-                    showImage(currentDraggingCarousel, newIndex);
-                }
-            }
-        }
+    const handleDragEnd = () => {
         isDragging = false;
+        hasChangedInThisSwipe = false;
         currentDraggingCarousel = null;
     };
 
