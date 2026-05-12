@@ -135,7 +135,9 @@ body.profile-about-open .about_project {
     cursor: pointer;
     background: white;
     padding: 0 0.25rem;
-    transition: all 0.25s cubic-bezier(.05, .82, .31, .96);
+    transition: background 0.25s cubic-bezier(.05, .82, .31, .96), 
+                color 0.25s cubic-bezier(.05, .82, .31, .96), 
+                transform 0.4s cubic-bezier(.05, .82, .31, .96);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -181,7 +183,7 @@ body.is-fullscreen-open #grid-increase {
 }
 }
 
-body.profile-about-open .navigation .about_button {
+body.profile-about-open .about_button {
     transform: rotate(180deg) !important;
     background: black !important;
     color: white !important;
