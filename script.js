@@ -472,37 +472,34 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('mouseup', handleDragEnd);
     document.addEventListener('mouseleave', handleDragEnd);
 
-    document.addEventListener('touchstart', (e) => {
-        const carousel = e.target.closest('.carousel');
-        if (carousel) {
-            isDragging = false; // Reset first to be sure
-            handleDragStart(e.touches[0].clientX, e.touches[0].clientY, carousel);
-        }
-    }, { passive: false });
-
-    document.addEventListener('touchmove', (e) => {
-        if (isDragging && currentDraggingCarousel) {
-            const x = e.touches[0].clientX;
-            const y = e.touches[0].clientY;
-            const deltaX = Math.abs(x - startX);
-            const deltaY = Math.abs(y - startY);
-
-            if (deltaX > deltaY) {
-                if (e.cancelable) e.preventDefault();
-                handleDragMove(x, y, true);
-            }
-        }
-    }, { passive: false });
-
     const clearDrag = (e) => {
         handleDragEnd();
     };
 
-    document.addEventListener('touchend', clearDrag, { passive: true });
-    document.addEventListener('touchcancel', clearDrag, { passive: true });
+    window.addEventListener('touchend', clearDrag, { passive: true });
+    window.addEventListener('touchcancel', clearDrag, { passive: true });
 
-    // Initialize counter dots interactivity
+    // Initialize counter dots interactivity and touch handlers
     carousels.forEach(carousel => {
+        carousel.addEventListener('touchstart', (e) => {
+            isDragging = false; 
+            handleDragStart(e.touches[0].clientX, e.touches[0].clientY, carousel);
+        }, { passive: true });
+
+        carousel.addEventListener('touchmove', (e) => {
+            if (isDragging && currentDraggingCarousel === carousel) {
+                const x = e.touches[0].clientX;
+                const y = e.touches[0].clientY;
+                const deltaX = Math.abs(x - startX);
+                const deltaY = Math.abs(y - startY);
+
+                if (deltaX > deltaY) {
+                    if (e.cancelable) e.preventDefault();
+                    handleDragMove(x, y, true);
+                }
+            }
+        }, { passive: false });
+
         const counter = carousel.querySelector('.carousel-counter');
         if (counter) {
             counter.addEventListener('click', (e) => {
