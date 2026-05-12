@@ -121,16 +121,14 @@ body.profile-about-open .about_project {
 
 .navigation {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.25rem;
     width: fit-content;
     box-sizing: border-box;
 }
 
 .nav-row {
-    display: flex;
-    width: fit-content;
-    gap: 0.25rem;
+    display: contents;
 }
 
 .nav-item {
@@ -155,6 +153,14 @@ body.profile-about-open .about_project {
 
 body.photography-active .photography-controls {
     display: inline-flex !important;
+}
+
+@media (min-width: 769px) {
+    .about_button,
+    .photography-controls {
+        width: 1.5rem !important;
+        padding: 0 !important;
+    }
 }
 
 #grid-close {
@@ -191,13 +197,12 @@ body.profile-about-open .navigation .about_button {
         background: black;
         color: white;
         -webkit-text-stroke: 0.015rem white;
-        padding-left: 0.5rem;
     }
 }
 
-/* Base padding transition for all nav items */
+/* Base transition for all nav items */
 .nav-item {
-    transition: all 0.25s cubic-bezier(.05, .82, .31, .96);
+    transition: background 0.25s cubic-bezier(.05, .82, .31, .96), color 0.25s cubic-bezier(.05, .82, .31, .96);
 }
 
 .home-link {
