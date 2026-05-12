@@ -101,6 +101,10 @@ body.profile-about-open .profile-metadata {
     display: block;
 }
 
+body.profile-about-open .about_project {
+    display: none !important;
+}
+
 .profile-metadata .right-wrapper {
     position: fixed;
     bottom: 0.25rem;
