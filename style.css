@@ -73,6 +73,18 @@ body.is-fullscreen-zoomed .profile-metadata .right-wrapper {
     pointer-events: none;
 }
 
+@media (min-width: 769px) {
+    body.is-fullscreen-zoomed .left-wrapper,
+    body.is-fullscreen-zoomed .profile-metadata .right-wrapper {
+        pointer-events: auto;
+    }
+
+    body.is-fullscreen-zoomed .left-wrapper:hover,
+    body.is-fullscreen-zoomed .profile-metadata .right-wrapper:hover {
+        opacity: 1;
+    }
+}
+
 body.profile-about-open .left-wrapper,
 body.profile-about-open .profile-metadata .right-wrapper {
     opacity: 1;
