@@ -74,7 +74,7 @@ body.is-fullscreen-open {
     transition: opacity 0.4s cubic-bezier(.05, .82, .31, .96);
 }
 
-body.is-fullscreen-zoomed .left-wrapper>*,
+body.is-fullscreen-zoomed .left-wrapper .nav-item:not(#grid-close),
 body.is-fullscreen-zoomed .profile-metadata .right-wrapper>* {
     opacity: 0.35;
 }
