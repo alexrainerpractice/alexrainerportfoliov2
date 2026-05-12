@@ -283,6 +283,16 @@ body.profile-about-open .about_me_wrapper {
         position: static;
         transform: none;
     }
+
+    .project_nav li .title-wrapper,
+    .project_nav li .about_button {
+        border: 0.5px solid black;
+    }
+
+    .project_nav li .about_project.show {
+        border: 0.5px solid black;
+        border-top: none;
+    }
 }
 
 .about_me p,
