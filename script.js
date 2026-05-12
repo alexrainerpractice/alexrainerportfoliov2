@@ -296,10 +296,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function showImage(carousel, index) {
+    function showImage(carousel, index, isFromScroll = false) {
         const images = carousel.querySelectorAll('img');
         const counter = carousel.querySelector('.carousel-counter');
         const spans = counter ? counter.querySelectorAll('span') : [];
+
+        if (window.innerWidth <= 768 && !isFromScroll) {
+            const inner = carousel.querySelector('.carousel-inner');
+            if (inner) {
+                const targetImg = images[index];
+                inner.scrollTo({
+                    left: targetImg.offsetLeft,
+                    behavior: 'smooth'
+                });
+            }
+        }
 
         images.forEach(img => img.classList.remove('active'));
         if (spans.length > 0) spans.forEach(span => span.classList.remove('active'));
@@ -308,6 +319,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (spans[index]) spans[index].classList.add('active');
         currentIndexes[carousel.id] = index;
     }
+
+    carousels.forEach(carousel => {
+        const inner = carousel.querySelector('.carousel-inner');
+        if (inner) {
+            inner.addEventListener('scroll', () => {
+                if (window.innerWidth > 768) return;
+                const width = inner.offsetWidth;
+                const scrollLeft = inner.scrollLeft;
+                const newIndex = Math.round(scrollLeft / width);
+                if (newIndex !== currentIndexes[carousel.id] && images[newIndex]) {
+                    showImage(carousel, newIndex, true);
+                }
+            }, {
+                passive: true
+            });
+        }
+    });
 
     const observerOptions = {
         threshold: 0.7
@@ -478,7 +506,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
     document.addEventListener('touchmove', (e) => {
-        if (isDragging) {
+        if (isDragging && window.innerWidth > 768) {
             handleDragMove(e.touches[0].clientX, e.touches[0].clientY, true);
         }
     }, { passive: true });
