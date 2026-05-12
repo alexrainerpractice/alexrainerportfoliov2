@@ -329,11 +329,19 @@ body.profile-about-open .about_me_wrapper {
 
 .nav-gutter span {
     background: white;
-    padding: 0 0.25rem;
+    width: 3rem;
+    text-align: center;
+    padding: 0;
     cursor: pointer;
     pointer-events: auto;
+    transition: all 0.25s cubic-bezier(.05, .82, .31, .96);
+}
 
-    transition: opacity 0.25s cubic-bezier(.05, .82, .31, .96);
+.nav-gutter span:hover,
+.nav-gutter span:active {
+    background: black;
+    color: white;
+    -webkit-text-stroke: 0.015rem white;
 }
 
 .fullscreen-overlay.is-zoomed .nav-gutter span,
@@ -357,11 +365,14 @@ body.profile-about-open .about_me_wrapper {
     cursor: pointer;
     z-index: 20;
     opacity: 1;
-    transition: opacity 0.25s cubic-bezier(.05, .82, .31, .96);
+    transition: all 0.25s cubic-bezier(.05, .82, .31, .96);
 }
 
-.fullscreen-close:hover {
-    opacity: 0.35;
+.fullscreen-close:hover,
+.fullscreen-close:active {
+    background: black;
+    color: white;
+    -webkit-text-stroke: 0.015rem white;
 }
 
 .carousel {
@@ -601,9 +612,19 @@ body.profile-about-open .about_me_wrapper {
     transform: translateX(-50%);
     background: white;
     padding: 0 0.25rem;
+    min-width: 3rem;
+    text-align: center;
     cursor: default;
     pointer-events: auto;
     z-index: 10;
+    transition: all 0.25s cubic-bezier(.05, .82, .31, .96);
+}
+
+.current-num:hover,
+.current-num:active {
+    background: black;
+    color: white;
+    -webkit-text-stroke: 0.015rem white;
 }
 
 
@@ -888,14 +909,16 @@ body.profile-about-open .about_me_wrapper {
 
     .nav-gutter span {
         background: white;
-        padding: 0 0.25rem;
+        width: 3rem;
+        text-align: center;
+        padding: 0;
         pointer-events: auto;
         display: inline-block;
         white-space: nowrap;
     }
 
     .current-num {
-        top: 0.25rem;
-        bottom: auto;
+        bottom: 0.25rem;
+        top: auto;
     }
 }
