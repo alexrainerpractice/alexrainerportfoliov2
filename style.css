@@ -961,4 +961,10 @@ body.profile-about-open .about_me_wrapper {
         top: 0.25rem;
         bottom: auto;
     }
+
+    .fullscreen-close {
+        left: auto;
+        right: 0.25rem;
+        transform: none;
+    }
 }
