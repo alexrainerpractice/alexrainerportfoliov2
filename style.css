@@ -48,7 +48,7 @@ a:not(.socials a)::after {
     max-width: 80%;
     z-index: 10;
     pointer-events: none;
-    mix-blend-mode: difference;
+    mix-blend-mode: multiply;
 }
 
 .left-wrapper>* {
@@ -70,7 +70,7 @@ body.profile-about-open .profile-metadata {
     z-index: 10;
     pointer-events: auto;
     text-align: right;
-    mix-blend-mode: difference;
+    mix-blend-mode: multiply;
 }
 
 .information {
