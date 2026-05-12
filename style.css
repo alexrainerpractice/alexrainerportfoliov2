@@ -330,6 +330,10 @@ body.profile-about-open .about_me_wrapper {
 .nav-gutter span {
     background: white;
     width: 3rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     padding: 0;
     cursor: pointer;
@@ -345,9 +349,13 @@ body.profile-about-open .about_me_wrapper {
 }
 
 .fullscreen-overlay.is-zoomed .nav-gutter span,
-.fullscreen-overlay.is-zoomed .current-num,
-.fullscreen-overlay.is-zoomed .fullscreen-close {
+.fullscreen-overlay.is-zoomed .nav-gutter span,
+.fullscreen-overlay.is-zoomed .current-num {
     opacity: 0.35;
+}
+
+.fullscreen-overlay.is-zoomed .fullscreen-close {
+    opacity: 1;
 }
 
 .fullscreen-overlay.is-zoomed .nav-gutter span:hover,
@@ -361,7 +369,12 @@ body.profile-about-open .about_me_wrapper {
     bottom: 0.25rem;
     right: 0.25rem;
     background: white;
-    padding: 0 0.25rem;
+    width: fit-content;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.5rem;
     cursor: pointer;
     z-index: 20;
     opacity: 1;
@@ -613,6 +626,10 @@ body.profile-about-open .about_me_wrapper {
     background: white;
     padding: 0 0.25rem;
     min-width: 3rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     cursor: default;
     pointer-events: auto;
@@ -910,6 +927,10 @@ body.profile-about-open .about_me_wrapper {
     .nav-gutter span {
         background: white;
         width: 3rem;
+        height: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         text-align: center;
         padding: 0;
         pointer-events: auto;
