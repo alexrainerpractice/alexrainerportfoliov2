@@ -639,7 +639,7 @@ body.profile-about-open .about_me_wrapper {
 }
 
 .fullscreen-overlay img.zoomed {
-    transform: scale(3);
+    transform: scale(2.2);
     cursor: move;
     transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1), transform-origin 0.25s cubic-bezier(.05, .82, .31, .96);
 }

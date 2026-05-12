@@ -125,8 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let rafId = null;
 
         function updatePan() {
-            currentX += (targetX - currentX) * 0.1;
-            currentY += (targetY - currentY) * 0.1;
+            currentX += (targetX - currentX) * 0.25;
+            currentY += (targetY - currentY) * 0.25;
             fullImg.style.transformOrigin = `${currentX.toFixed(2)}% ${currentY.toFixed(2)}%`;
 
             if (fullImg.classList.contains('zoomed')) {
@@ -268,8 +268,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const deltaY = e.touches[0].clientY - startY;
 
                 // Sensitivity adjustment
-                targetX = lastX - (deltaX / window.innerWidth * 50);
-                targetY = lastY - (deltaY / window.innerHeight * 50);
+                targetX = lastX - (deltaX / window.innerWidth * 80);
+                targetY = lastY - (deltaY / window.innerHeight * 80);
 
                 targetX = Math.max(0, Math.min(100, targetX));
                 targetY = Math.max(0, Math.min(100, targetY));
