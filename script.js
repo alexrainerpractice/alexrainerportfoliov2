@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentIndexes[carousel.id] = index;
     }
 
-    const SWIPE_STEP = 40; 
+    const SWIPE_STEP = 30; 
     let startY = 0;
 
     const handleDragStart = (x, y, carousel) => {
@@ -472,31 +472,40 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('mouseup', handleDragEnd);
     document.addEventListener('mouseleave', handleDragEnd);
 
+    let dragDirection = null;
+
     const clearDrag = (e) => {
         handleDragEnd();
+        dragDirection = null;
     };
 
     window.addEventListener('touchend', clearDrag, { passive: true });
     window.addEventListener('touchcancel', clearDrag, { passive: true });
 
-    // Initialize counter dots interactivity and touch handlers
     carousels.forEach(carousel => {
         carousel.addEventListener('touchstart', (e) => {
             isDragging = false; 
+            dragDirection = null;
             handleDragStart(e.touches[0].clientX, e.touches[0].clientY, carousel);
         }, { passive: true });
 
         carousel.addEventListener('touchmove', (e) => {
-            if (isDragging && currentDraggingCarousel === carousel) {
-                const x = e.touches[0].clientX;
-                const y = e.touches[0].clientY;
-                const deltaX = Math.abs(x - startX);
-                const deltaY = Math.abs(y - startY);
+            if (!isDragging || currentDraggingCarousel !== carousel) return;
 
-                if (deltaX > deltaY) {
-                    if (e.cancelable) e.preventDefault();
-                    handleDragMove(x, y, true);
+            const x = e.touches[0].clientX;
+            const y = e.touches[0].clientY;
+            const dx = x - startX;
+            const dy = y - startY;
+
+            if (!dragDirection) {
+                if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                    dragDirection = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
                 }
+            }
+
+            if (dragDirection === 'h') {
+                if (e.cancelable) e.preventDefault();
+                handleDragMove(x, y, true);
             }
         }, { passive: false });
 
