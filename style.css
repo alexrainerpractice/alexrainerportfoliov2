@@ -428,7 +428,7 @@ body.profile-about-open .about_me_wrapper {
     opacity: 0;
     max-height: 0;
     overflow: hidden;
-    transition: opacity 0.5s ease, margin-top 0.5s ease, max-height 0.5s ease;
+    transition: margin-top 0.5s ease, max-height 0.5s ease;
     pointer-events: none;
 }
 
@@ -824,7 +824,7 @@ body.profile-about-open .about_me_wrapper {
         opacity: 0;
         max-height: 0;
         overflow: hidden;
-        transition: opacity 0.5s ease, max-height 0.5s ease, margin-top 0.5s ease;
+        transition: max-height 0.5s ease, margin-top 0.5s ease;
         z-index: 10;
         position: relative;
     }
