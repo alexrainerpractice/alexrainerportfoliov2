@@ -156,6 +156,19 @@ body.profile-about-open .about_project {
 body.photography-active .photography-controls {
     display: inline-flex !important;
 }
+
+#grid-close {
+    display: none !important;
+}
+
+body.is-fullscreen-open #grid-close {
+    display: inline-flex !important;
+}
+
+body.is-fullscreen-open #grid-decrease,
+body.is-fullscreen-open #grid-increase {
+    display: none !important;
+}
 }
 
 body.profile-about-open .navigation .about_button {

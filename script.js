@@ -123,18 +123,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentBtn = document.createElement('span');
         currentBtn.className = 'current-num';
 
-        const closeBtn = document.createElement('span');
-        closeBtn.className = 'fullscreen-close';
-        closeBtn.textContent = 'Close';
-
         overlay.appendChild(leftGutter);
         overlay.appendChild(fullImg);
         overlay.appendChild(rightGutter);
         overlay.appendChild(currentBtn);
-        overlay.appendChild(closeBtn);
 
         document.body.appendChild(overlay);
         document.body.classList.add('is-fullscreen-open');
+
+        const gridClose = document.getElementById('grid-close');
+        if (gridClose) {
+            gridClose.addEventListener('click', closeFullscreen, { once: true });
+        }
 
 
         leftGutter.addEventListener('click', (e) => {
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateFullscreenView(currentIndex + 1);
         });
 
-        closeBtn.addEventListener('click', closeFullscreen);
+
 
 
         let targetX = 50, targetY = 50;
