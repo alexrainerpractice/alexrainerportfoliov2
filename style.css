@@ -151,6 +151,10 @@ body.profile-about-open .navigation .about_button {
 .home-link:hover,
 .home-link:active {
     background: black;
+}
+
+.home-link:hover *,
+.home-link:active * {
     color: white;
     -webkit-text-stroke: 0.015rem white;
 }
