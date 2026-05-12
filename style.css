@@ -371,7 +371,8 @@ body.profile-about-open .about_me_wrapper {
 }
 
 .fullscreen-overlay.is-zoomed .nav-gutter span {
-    display: none;
+    display: flex;
+    opacity: 0.35;
 }
 
 .fullscreen-overlay.is-zoomed .current-num {
@@ -385,7 +386,10 @@ body.profile-about-open .about_me_wrapper {
     opacity: 1;
 }
 
-.fullscreen-overlay.is-zoomed .nav-gutter span:hover,
+.fullscreen-overlay.is-zoomed .nav-gutter span:hover {
+    opacity: 1;
+}
+
 .fullscreen-overlay.is-zoomed .current-num:hover,
 .fullscreen-overlay.is-zoomed .fullscreen-close:hover {
     opacity: 1;
@@ -961,5 +965,9 @@ body.profile-about-open .about_me_wrapper {
     .current-num {
         top: 0.25rem;
         bottom: auto;
+    }
+
+    .fullscreen-overlay.is-zoomed .nav-gutter span {
+        display: none;
     }
 }
