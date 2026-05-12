@@ -1054,49 +1054,4 @@ body.profile-about-open .about_me_wrapper {
         right: 0.25rem;
         transform: none;
     }
-
-    /* Photography Gallery Mobile Overrides */
-    .photography-grid {
-        gap: 0;
-        padding: 0;
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    .photo-item {
-        flex-grow: 1;
-        min-width: 50px;
-        max-width: 100%;
-    }
-
-    /* Base widths to encourage more small images per row */
-    .photo-item:nth-child(odd),
-    .photo-item:nth-child(3n+1) {
-        width: 20%;
-    }
-
-    .photo-item:nth-child(even),
-    .photo-item:nth-child(3n+2) {
-        width: 30%;
-    }
-
-    .photo-item:nth-child(4n) {
-        width: 60%;
-    }
-
-    .photo-item:nth-child(5n) {
-        width: 25%;
-    }
-
-    /* Periodic full-width or large standout shots */
-    .photo-item:nth-child(7n) {
-        width: 100%;
-    }
-
-    /* Ensure specific rhythmic variation */
-    .photo-item:nth-child(1) { width: 25%; }
-    .photo-item:nth-child(2) { width: 35%; }
-    .photo-item:nth-child(3) { width: 40%; }
-    .photo-item:nth-child(6) { width: 20%; }
-    .photo-item:nth-child(8) { width: 80%; }
 }
