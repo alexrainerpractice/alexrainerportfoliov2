@@ -542,17 +542,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const counter = carousel.querySelector('.carousel-counter');
         if (counter) {
-            counter.addEventListener('click', (e) => {
-                e.stopPropagation();
+            const handleCounterTap = (e) => {
                 const span = e.target.closest('span');
                 if (span) {
+                    e.stopPropagation();
                     const spans = Array.from(counter.querySelectorAll('span'));
                     const index = spans.indexOf(span);
                     if (index !== -1) {
                         showImage(carousel, index);
                     }
                 }
-            });
+            };
+
+            counter.addEventListener('click', handleCounterTap);
+            counter.addEventListener('touchstart', handleCounterTap, { passive: true });
         }
     });
 });
