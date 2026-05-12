@@ -314,6 +314,10 @@ document.addEventListener('DOMContentLoaded', () => {
         currentIndexes[carousel.id] = index;
     }
 
+    let isDragging = false;
+    let currentDraggingCarousel = null;
+    let initialX = 0;
+    let startY = 0;
     let hasChangedInThisSwipe = false;
     const SWIPE_THRESHOLD = 30;
 
@@ -477,20 +481,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize counter dots interactivity and touch handlers
     carousels.forEach(carousel => {
         carousel.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            dragDirection = null;
-            currentDraggingCarousel = carousel;
+            const isCounter = e.target.closest('.carousel-counter');
+            if (isCounter) {
+                isDragging = false;
+                return;
+            }
 
             const touch = e.touches[0];
-            initialX = touch.clientX;
-            startX = touch.clientX;
-            startY = touch.clientY;
-            startTime = Date.now();
-            initialIndex = currentIndexes[carousel.id] || 0;
+            handleDragStart(touch.clientX, touch.clientY, carousel);
         }, { passive: true });
 
         carousel.addEventListener('touchmove', (e) => {
-            if (!isDragging || currentDraggingCarousel !== carousel) return;
+            if (!isDragging || currentDraggingCarousel !== carousel || hasChangedInThisSwipe) return;
 
             const touch = e.touches[0];
             const x = touch.clientX;
@@ -511,28 +513,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { passive: false });
 
         carousel.addEventListener('touchend', (e) => {
-            const x = e.changedTouches ? e.changedTouches[0].clientX : initialX;
-            handleDragEnd(x);
+            handleDragEnd();
             dragDirection = null;
         }, { passive: true });
 
         carousel.addEventListener('touchcancel', (e) => {
-            handleDragEnd(initialX);
+            handleDragEnd();
             dragDirection = null;
         }, { passive: true });
 
         const counter = carousel.querySelector('.carousel-counter');
         if (counter) {
-            counter.addEventListener('click', (e) => {
+            const handleCounterTap = (e) => {
                 const span = e.target.closest('span');
                 if (span) {
+                    e.stopPropagation();
                     const spans = Array.from(counter.querySelectorAll('span'));
                     const index = spans.indexOf(span);
                     if (index !== -1) {
                         showImage(carousel, index);
                     }
                 }
-            });
+            };
+
+            counter.addEventListener('click', handleCounterTap);
+            counter.addEventListener('touchstart', handleCounterTap, { passive: true });
         }
     });
 });
