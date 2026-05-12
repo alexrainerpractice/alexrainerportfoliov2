@@ -1063,31 +1063,31 @@ body.profile-about-open .about_me_wrapper {
 
     .photo-item:nth-child(odd),
     .photo-item:nth-child(3n+1) {
-        width: 40%;
+        width: 35%;
     }
 
     .photo-item:nth-child(even),
     .photo-item:nth-child(3n+2) {
-        width: 60%;
-    }
-
-    .photo-item:nth-child(4n) {
-        width: 100%;
-    }
-
-    .photo-item:nth-child(5n) {
         width: 50%;
     }
 
+    .photo-item:nth-child(4n) {
+        width: 80%;
+    }
+
+    .photo-item:nth-child(5n) {
+        width: 45%;
+    }
+
     /* Specific overrides scaled for mobile */
-    .photo-item:nth-child(1) { width: 40%; }
-    .photo-item:nth-child(2) { width: 60%; }
-    .photo-item:nth-child(3) { width: 50%; }
-    .photo-item:nth-child(4) { width: 50%; }
-    .photo-item:nth-child(5) { width: 100%; }
-    .photo-item:nth-child(6) { width: 35%; }
-    .photo-item:nth-child(7) { width: 65%; }
-    .photo-item:nth-child(8) { width: 100%; }
-    .photo-item:nth-child(9) { width: 45%; }
-    .photo-item:nth-child(10) { width: 55%; }
+    .photo-item:nth-child(1) { width: 35%; }
+    .photo-item:nth-child(2) { width: 55%; }
+    .photo-item:nth-child(3) { width: 45%; }
+    .photo-item:nth-child(4) { width: 45%; }
+    .photo-item:nth-child(5) { width: 85%; }
+    .photo-item:nth-child(6) { width: 30%; }
+    .photo-item:nth-child(7) { width: 60%; }
+    .photo-item:nth-child(8) { width: 90%; }
+    .photo-item:nth-child(9) { width: 40%; }
+    .photo-item:nth-child(10) { width: 50%; }
 }
