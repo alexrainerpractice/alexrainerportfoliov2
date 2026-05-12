@@ -490,6 +490,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize counter dots interactivity and touch handlers
     carousels.forEach(carousel => {
         carousel.addEventListener('touchstart', (e) => {
+            const isCounter = e.target.closest('.carousel-counter');
+            if (isCounter) {
+                isDragging = false;
+                return;
+            }
+
             isDragging = true;
             dragDirection = null;
             currentDraggingCarousel = carousel;
