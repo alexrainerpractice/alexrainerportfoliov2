@@ -586,16 +586,18 @@ body.profile-about-open .about_me_wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 1rem 0;
+    pointer-events: auto;
 }
 
 .carousel-counter span {
     cursor: pointer;
-    margin: 0 0.1rem;
+    margin: 0 0.15rem;
     opacity: .2;
     transition: padding 0.3s cubic-bezier(.05, .82, .31, .96), opacity 0.2s ease;
-    padding: 0 0.1rem;
+    padding: 0.5rem 0.2rem;
     display: inline-block;
-    min-width: 0.8rem;
+    min-width: 1rem;
     text-align: center;
 }
 
