@@ -177,6 +177,16 @@ body.is-fullscreen-open #grid-close {
     display: inline-flex !important;
 }
 
+@media (min-width: 769px) {
+    body.is-fullscreen-open #grid-close {
+        position: fixed;
+        bottom: 0.25rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+    }
+}
+
 body.is-fullscreen-open #grid-decrease,
 body.is-fullscreen-open #grid-increase {
     display: none !important;
