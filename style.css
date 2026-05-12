@@ -210,6 +210,11 @@ body.is-fullscreen-open #grid-close {
         padding: 0 0.25rem !important;
         white-space: nowrap;
     }
+
+    body.is-fullscreen-open #grid-close:hover {
+        background: black !important;
+        color: white !important;
+    }
 }
 
 body.is-fullscreen-open #grid-decrease,
