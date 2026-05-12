@@ -296,21 +296,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function showImage(carousel, index, isFromScroll = false) {
+    function showImage(carousel, index) {
         const images = carousel.querySelectorAll('img');
         const counter = carousel.querySelector('.carousel-counter');
         const spans = counter ? counter.querySelectorAll('span') : [];
-
-        if (window.innerWidth <= 768 && !isFromScroll) {
-            const inner = carousel.querySelector('.carousel-inner');
-            if (inner) {
-                const targetImg = images[index];
-                inner.scrollTo({
-                    left: targetImg.offsetLeft,
-                    behavior: 'smooth'
-                });
-            }
-        }
 
         images.forEach(img => img.classList.remove('active'));
         if (spans.length > 0) spans.forEach(span => span.classList.remove('active'));
@@ -320,22 +309,47 @@ document.addEventListener('DOMContentLoaded', () => {
         currentIndexes[carousel.id] = index;
     }
 
-    carousels.forEach(carousel => {
-        const inner = carousel.querySelector('.carousel-inner');
-        if (inner) {
-            inner.addEventListener('scroll', () => {
-                if (window.innerWidth > 768) return;
-                const width = inner.offsetWidth;
-                const scrollLeft = inner.scrollLeft;
-                const newIndex = Math.round(scrollLeft / width);
-                if (newIndex !== currentIndexes[carousel.id] && images[newIndex]) {
-                    showImage(carousel, newIndex, true);
-                }
-            }, {
-                passive: true
-            });
+    const SWIPE_STEP = 40; 
+    let startY = 0;
+
+    const handleDragStart = (x, y, carousel) => {
+        isDragging = true;
+        startX = x;
+        startY = y;
+        currentDraggingCarousel = carousel;
+    };
+
+    const handleDragMove = (x, y, isTouch = false) => {
+        if (!isDragging || !currentDraggingCarousel) return;
+
+        const deltaX = x - startX;
+        const deltaY = y - startY;
+
+        if (isTouch && Math.abs(deltaY) > Math.abs(deltaX) * 1.5) {
+            return; 
         }
-    });
+
+        const images = currentDraggingCarousel.querySelectorAll('img');
+        if (images.length <= 1) return;
+        
+        const currentIndex = currentIndexes[currentDraggingCarousel.id];
+
+        if (Math.abs(deltaX) > SWIPE_STEP) {
+            const direction = deltaX > 0 ? -1 : 1;
+            let newIndex = (currentIndex + direction) % images.length;
+            if (newIndex < 0) newIndex = images.length - 1;
+            
+            showImage(currentDraggingCarousel, newIndex);
+            
+            startX = x;
+            startY = y;
+        }
+    };
+
+    const handleDragEnd = () => {
+        isDragging = false;
+        currentDraggingCarousel = null;
+    };
 
     const observerOptions = {
         threshold: 0.7
@@ -434,48 +448,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    let startY = 0;
-
-    const handleDragStart = (x, y, carousel) => {
-        isDragging = true;
-        startX = x;
-        startY = y;
-        currentDraggingCarousel = carousel;
-    };
-
-    const handleDragMove = (x, y, isTouch = false) => {
-        if (!isDragging || !currentDraggingCarousel) return;
-
-        const deltaX = x - startX;
-        const deltaY = y - startY;
-
-        // If touch, check if movement is primarily horizontal
-        if (isTouch && Math.abs(deltaY) > Math.abs(deltaX)) {
-            return; // Allow vertical scroll
-        }
-
-        const images = currentDraggingCarousel.querySelectorAll('img');
-        const currentIndex = currentIndexes[currentDraggingCarousel.id];
-
-        if (deltaX > DRAG_THRESHOLD) {
-            let newIndex = currentIndex - 1;
-            if (newIndex < 0) newIndex = images.length - 1;
-            showImage(currentDraggingCarousel, newIndex);
-            startX = x;
-            startY = y;
-        } else if (deltaX < -DRAG_THRESHOLD) {
-            let newIndex = (currentIndex + 1) % images.length;
-            showImage(currentDraggingCarousel, newIndex);
-            startX = x;
-            startY = y;
-        }
-    };
-
-    const handleDragEnd = () => {
-        isDragging = false;
-        currentDraggingCarousel = null;
-    };
-
     document.addEventListener('mousedown', (e) => {
         const carousel = e.target.closest('.carousel');
         if (carousel) handleDragStart(e.clientX, e.clientY, carousel);
@@ -506,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
     document.addEventListener('touchmove', (e) => {
-        if (isDragging && window.innerWidth > 768) {
+        if (isDragging) {
             handleDragMove(e.touches[0].clientX, e.touches[0].clientY, true);
         }
     }, { passive: true });
