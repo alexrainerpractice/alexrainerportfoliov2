@@ -101,7 +101,8 @@ body.profile-about-open .navigation .about_button {
     transform: rotate(180deg);
 }
 
-.nav-item:hover {
+.nav-item:hover,
+.nav-item:active {
     padding-left: 0.5rem;
 }
 
@@ -126,7 +127,8 @@ body.profile-about-open .navigation .about_button {
 }
 
 .view-toggle .nav-item.active,
-.view-toggle .nav-item:hover {
+.view-toggle .nav-item:hover,
+.view-toggle .nav-item:active {
     opacity: 1;
     background: black;
     color: white;
@@ -226,13 +228,16 @@ body.profile-about-open .about_me_wrapper {
 }
 
 .project_nav li:hover,
+.project_nav li:active,
 .project_nav li.active {
     padding-left: 0.25rem;
 }
 
 .project_nav li:hover .title-wrapper,
+.project_nav li:active .title-wrapper,
 .project_nav li.active .title-wrapper,
 .project_nav li:hover .about_button,
+.project_nav li:active .about_button,
 .project_nav li.active .about_button,
 .project_nav li.active .about_project.show {
     background: white;
@@ -262,6 +267,7 @@ body.profile-about-open .about_me_wrapper {
 }
 
 .project_nav li:hover .project_title,
+.project_nav li:active .project_title,
 .project_nav li.active .project_title {
     opacity: 1;
 }
@@ -294,7 +300,8 @@ body.profile-about-open .about_me_wrapper {
     margin-top: 0.25rem;
 }
 
-.about_project.show a:hover {
+.about_project.show a:hover,
+.about_project.show a:active {
     opacity: 0.35;
     transition: opacity 0.25s cubic-bezier(.05, .82, .31, .96);
 
@@ -379,7 +386,8 @@ body.profile-about-open .about_me_wrapper {
     padding: 0;
 }
 
-.socials a:hover {
+.socials a:hover,
+.socials a:active {
     padding: 0 0.25rem;
     background: white;
 }
