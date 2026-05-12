@@ -362,11 +362,12 @@ body.profile-about-open .about_me_wrapper {
     transition: all 0.25s cubic-bezier(.05, .82, .31, .96);
 }
 
+/* Remove hover effects from side navigation numbers */
 .nav-gutter span:hover,
 .nav-gutter span:active {
-    background: black;
-    color: white;
-    -webkit-text-stroke: 0.015rem white;
+    background: transparent;
+    color: inherit;
+    -webkit-text-stroke: none;
 }
 
 .fullscreen-overlay.is-zoomed .nav-gutter span {
@@ -393,7 +394,8 @@ body.profile-about-open .about_me_wrapper {
 .fullscreen-close {
     position: absolute;
     bottom: 0.25rem;
-    right: 0.25rem;
+    left: 50%;
+    transform: translateX(-50%);
     background: white;
     width: fit-content;
     height: 1.5rem;
@@ -646,7 +648,7 @@ body.profile-about-open .about_me_wrapper {
 
 .current-num {
     position: absolute;
-    bottom: 0.25rem;
+    top: 0.25rem;
     left: 50%;
     transform: translateX(-50%);
     background: transparent;
