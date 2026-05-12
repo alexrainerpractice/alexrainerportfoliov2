@@ -47,6 +47,10 @@ a:not(.socials a)::after {
     left: 0.25rem;
     max-width: 80%;
     z-index: 10;
+    pointer-events: none;
+}
+
+.left-wrapper > * {
     pointer-events: auto;
 }
 
