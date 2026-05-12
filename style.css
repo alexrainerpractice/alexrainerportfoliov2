@@ -143,13 +143,25 @@ body.profile-about-open .navigation .about_button {
     -webkit-text-stroke: 0.015rem white;
 }
 
-.nav-item:hover,
-.nav-item:active,
 .nav-item.active {
     background: black;
     color: white;
     -webkit-text-stroke: 0.015rem white;
-    padding-left: 0.5rem;
+}
+
+@media (hover: hover) {
+    .nav-item:hover,
+    .nav-item:active {
+        background: black;
+        color: white;
+        -webkit-text-stroke: 0.015rem white;
+        padding-left: 0.5rem;
+    }
+}
+
+/* Base padding transition for all nav items */
+.nav-item {
+    transition: all 0.25s cubic-bezier(.05, .82, .31, .96);
 }
 
 .home-link {
@@ -160,13 +172,20 @@ body.profile-about-open .navigation .about_button {
 
 .home-link:hover,
 .home-link:active {
-    background: black;
+    /* Base background transition */
 }
 
-.home-link:hover *,
-.home-link:active * {
-    color: white;
-    -webkit-text-stroke: 0.015rem white;
+@media (hover: hover) {
+    .home-link:hover,
+    .home-link:active {
+        background: black;
+    }
+
+    .home-link:hover *,
+    .home-link:active * {
+        color: white;
+        -webkit-text-stroke: 0.015rem white;
+    }
 }
 
 .home-link h1 {
@@ -301,6 +320,15 @@ body.profile-about-open .about_me_wrapper {
     background: white;
 }
 
+/* Ensure the about button stays inverted when the description is open */
+.project_nav li:has(.about_project.show) .about_button {
+    background: black !important;
+    color: white !important;
+    -webkit-text-stroke: 0.015rem white !important;
+    opacity: 1 !important;
+    transform: rotate(180deg);
+}
+
 .project_nav li.active .about_project.show {
     background: white;
 }
@@ -340,13 +368,7 @@ body.profile-about-open .about_me_wrapper {
     opacity: 1;
 }
 
-.project_nav li:has(.about_project.show) .about_button {
-    transform: rotate(180deg);
-    background: black;
-    color: white;
-    -webkit-text-stroke: 0.015rem white;
-    opacity: 1;
-}
+/* (Moved to line 300 for higher priority) */
 
 .project_number {
     display: inline-block;
@@ -805,6 +827,7 @@ body.profile-about-open .about_me_wrapper {
         text-align: center;
         padding: 0;
         margin-left: 0 !important;
+        background: white;
     }
 
     .project_list {
