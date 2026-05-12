@@ -22,9 +22,16 @@ a {
     text-decoration: none;
     color: inherit;
     display: inline-block;
+    transition: opacity 0.25s cubic-bezier(.05, .82, .31, .96);
 }
 
-a:not(.socials a)::after {
+.about_me a:hover,
+.about_project a:hover,
+.socials a:hover {
+    opacity: 0.35;
+}
+
+a:not(.socials a):not(.home-link a):not(.nav-item a):not(.project_title a)::after {
     content: '';
     position: absolute;
     left: 0;
