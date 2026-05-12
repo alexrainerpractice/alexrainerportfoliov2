@@ -138,6 +138,9 @@ body.profile-about-open .profile-metadata {
 
 body.profile-about-open .navigation .about_button {
     transform: rotate(180deg);
+    background: black;
+    color: white;
+    -webkit-text-stroke: 0.015rem white;
 }
 
 .nav-item:hover,
@@ -294,7 +297,10 @@ body.profile-about-open .about_me_wrapper {
 .project_nav li.active .title-wrapper,
 .project_nav li:hover .about_button,
 .project_nav li:active .about_button,
-.project_nav li.active .about_button,
+.project_nav li.active .about_button {
+    background: white;
+}
+
 .project_nav li.active .about_project.show {
     background: white;
 }
@@ -311,6 +317,7 @@ body.profile-about-open .about_me_wrapper {
 
 .project_nav li .about_button {
     opacity: 0;
+    background: white;
     width: 3rem;
     text-align: center;
     display: inline-block;
@@ -335,6 +342,10 @@ body.profile-about-open .about_me_wrapper {
 
 .project_nav li:has(.about_project.show) .about_button {
     transform: rotate(180deg);
+    background: black;
+    color: white;
+    -webkit-text-stroke: 0.015rem white;
+    opacity: 1;
 }
 
 .project_number {
