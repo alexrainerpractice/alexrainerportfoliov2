@@ -489,28 +489,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let dragDirection = null;
 
-    const clearDrag = (e) => {
-        const x = e.changedTouches ? e.changedTouches[0].clientX : (e.clientX || 0);
-        handleDragEnd(x);
-        dragDirection = null;
-    };
-
-    window.addEventListener('touchend', clearDrag, { passive: true });
-    window.addEventListener('touchcancel', clearDrag, { passive: true });
-
+    // Initialize counter dots interactivity and touch handlers
     carousels.forEach(carousel => {
         carousel.addEventListener('touchstart', (e) => {
-            isDragging = false; 
+            isDragging = true;
             dragDirection = null;
-            handleDragStart(e.touches[0].clientX, e.touches[0].clientY, carousel);
+            currentDraggingCarousel = carousel;
+            
+            const touch = e.touches[0];
+            initialX = touch.clientX;
+            startX = touch.clientX;
+            startY = touch.clientY;
+            startTime = Date.now();
+            initialIndex = currentIndexes[carousel.id] || 0;
         }, { passive: true });
 
         carousel.addEventListener('touchmove', (e) => {
             if (!isDragging || currentDraggingCarousel !== carousel) return;
 
-            const x = e.touches[0].clientX;
-            const y = e.touches[0].clientY;
-            const dx = x - startX;
+            const touch = e.touches[0];
+            const x = touch.clientX;
+            const y = touch.clientY;
+            const dx = x - initialX;
             const dy = y - startY;
 
             if (!dragDirection) {
@@ -524,6 +524,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 handleDragMove(x, y, true);
             }
         }, { passive: false });
+
+        carousel.addEventListener('touchend', (e) => {
+            const x = e.changedTouches ? e.changedTouches[0].clientX : initialX;
+            handleDragEnd(x);
+            dragDirection = null;
+        }, { passive: true });
+
+        carousel.addEventListener('touchcancel', (e) => {
+            handleDragEnd(initialX);
+            dragDirection = null;
+        }, { passive: true });
 
         const counter = carousel.querySelector('.carousel-counter');
         if (counter) {
