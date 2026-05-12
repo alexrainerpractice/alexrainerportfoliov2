@@ -178,7 +178,7 @@ body.photography-active .photography-controls {
 
     .about_button,
     .photography-controls {
-        width: 2rem !important;
+        width: 3rem !important;
         padding: 0 !important;
     }
 }
@@ -438,6 +438,12 @@ body.profile-about-open .about_me_wrapper {
     text-align: center;
     display: inline-block;
     transition: opacity 0.25s cubic-bezier(.05, .82, .31, .96), transform 0.4s cubic-bezier(.05, .82, .31, .96);
+}
+
+.project_nav li .about_button:hover {
+    background: black !important;
+    color: white !important;
+    -webkit-text-stroke: 0.015rem white !important;
 }
 
 .nav-item.about_button {
@@ -892,7 +898,9 @@ body.profile-about-open .about_me_wrapper {
 
     .nav-row .nav-item {
         flex: 1;
+        width: auto !important;
         text-align: center;
+        padding: 0 !important;
     }
 
     body.is-fullscreen-open .home-link,
