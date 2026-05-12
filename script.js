@@ -309,15 +309,17 @@ document.addEventListener('DOMContentLoaded', () => {
         currentIndexes[carousel.id] = index;
     }
 
-    const SWIPE_STEP = 40; 
+    const SWIPE_STEP = 35; 
     let initialX = 0;
     let initialIndex = 0;
+    let startTime = 0;
 
     const handleDragStart = (x, y, carousel) => {
         isDragging = true;
         startX = x;
         startY = y;
         initialX = x;
+        startTime = Date.now();
         initialIndex = currentIndexes[carousel.id] || 0;
         currentDraggingCarousel = carousel;
     };
@@ -341,10 +343,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const handleDragEnd = () => {
+    const handleDragEnd = (endX) => {
         if (isDragging && currentDraggingCarousel) {
-            // Optional: flick detection if total movement was small but fast
-            // For now, the absolute distance logic is very solid
+            const dx = endX - initialX;
+            const dt = Date.now() - startTime;
+            
+            // Flick detection: fast movement (under 250ms) over 20px
+            if (dt < 250 && Math.abs(dx) > 20) {
+                const images = currentDraggingCarousel.querySelectorAll('img');
+                const steps = Math.round(dx / SWIPE_STEP);
+                
+                // If the distance wasn't enough to trigger a full step yet
+                if (steps === 0) {
+                    const direction = dx > 0 ? -1 : 1;
+                    let newIndex = (initialIndex + direction) % images.length;
+                    if (newIndex < 0) newIndex = images.length - 1;
+                    showImage(currentDraggingCarousel, newIndex);
+                }
+            }
         }
         isDragging = false;
         currentDraggingCarousel = null;
@@ -468,13 +484,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    document.addEventListener('mouseup', handleDragEnd);
-    document.addEventListener('mouseleave', handleDragEnd);
+    document.addEventListener('mouseup', (e) => handleDragEnd(e.clientX));
+    document.addEventListener('mouseleave', (e) => handleDragEnd(e.clientX));
 
     let dragDirection = null;
 
     const clearDrag = (e) => {
-        handleDragEnd();
+        const x = e.changedTouches ? e.changedTouches[0].clientX : (e.clientX || 0);
+        handleDragEnd(x);
         dragDirection = null;
     };
 
