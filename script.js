@@ -66,6 +66,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const gridDecrease = document.getElementById('grid-decrease');
+    const gridIncrease = document.getElementById('grid-increase');
+    let gridScale = 1.0;
+
+    if (gridDecrease && gridIncrease) {
+        gridDecrease.addEventListener('click', () => {
+            // "Decrease" makes images smaller (more images)
+            gridScale = Math.max(0.5, gridScale - 0.1);
+            updateGridScale();
+        });
+        gridIncrease.addEventListener('click', () => {
+            // "Increase" makes images bigger (fewer images)
+            gridScale = Math.min(2.0, gridScale + 0.1);
+            updateGridScale();
+        });
+    }
+
+    function updateGridScale() {
+        const grid = document.querySelector('.photography-grid');
+        if (grid) {
+            grid.style.setProperty('--photo-grid-scale', gridScale);
+        }
+    }
+
 
     document.addEventListener('click', (e) => {
         const img = e.target.closest('.photo-item img');
