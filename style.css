@@ -84,8 +84,8 @@ body.is-fullscreen-zoomed .profile-metadata .right-wrapper > * {
     }
 }
 
-body.profile-about-open .left-wrapper,
-body.profile-about-open .profile-metadata .right-wrapper {
+body.profile-about-open .left-wrapper > *,
+body.profile-about-open .profile-metadata .right-wrapper > * {
     opacity: 1;
     pointer-events: auto;
 }
