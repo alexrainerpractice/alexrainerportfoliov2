@@ -256,14 +256,17 @@ body.profile-about-open .about_me_wrapper {
 
 .project_nav li .about_button {
     opacity: 0;
-    padding: 0 0.25rem;
+    width: 2rem;
+    text-align: center;
     margin-left: 0.25rem;
     display: inline-block;
     transition: opacity 0.25s cubic-bezier(.05, .82, .31, .96), transform 0.4s cubic-bezier(.05, .82, .31, .96);
 }
 
 .nav-item.about_button {
-    padding: 0 .5rem;
+    width: 2rem;
+    text-align: center;
+    padding: 0;
 }
 
 .project_nav li:hover .project_title,
@@ -690,7 +693,9 @@ body.profile-about-open .about_me_wrapper {
     }
 
     .about_button {
-        padding: 0 1rem;
+        width: 2rem;
+        text-align: center;
+        padding: 0;
         margin-left: 0 !important;
     }
 
