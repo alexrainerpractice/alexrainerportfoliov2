@@ -97,9 +97,9 @@ body.is-fullscreen-zoomed #grid-close {
         pointer-events: auto;
     }
 
-    body.is-fullscreen-zoomed .left-wrapper .nav-item:hover,
+    body.is-fullscreen-zoomed .nav-item:hover,
     body.is-fullscreen-zoomed .profile-metadata .right-wrapper>*:hover {
-        opacity: 1;
+        opacity: 1 !important;
     }
 }
 
