@@ -360,9 +360,9 @@ body.profile-about-open .about_me_wrapper {
 }
 
 .fullscreen-overlay.is-zoomed .nav-gutter span,
-.fullscreen-overlay.is-zoomed .nav-gutter span,
 .fullscreen-overlay.is-zoomed .current-num {
     opacity: 0.35;
+    background: transparent;
 }
 
 .fullscreen-overlay.is-zoomed .fullscreen-close {
@@ -636,8 +636,7 @@ body.profile-about-open .about_me_wrapper {
     transform: translateX(-50%);
     background: white;
     padding: 0 0.25rem;
-    min-width: 3rem;
-    height: 1.5rem;
+    min-width: fit-content;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -936,14 +935,7 @@ body.profile-about-open .about_me_wrapper {
     }
 
     .nav-gutter span {
-        background: white;
-        width: 3rem;
-        height: 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 0;
+        padding: 0 0.25rem;
         pointer-events: auto;
         display: inline-block;
         white-space: nowrap;
