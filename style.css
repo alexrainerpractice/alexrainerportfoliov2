@@ -226,10 +226,6 @@ body.profile-about-open .about_me_wrapper {
     list-style: none;
     cursor: pointer;
     width: fit-content;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.25rem;
     transition: padding-left 0.25s cubic-bezier(.05, .82, .31, .96);
     padding: 0;
 }
@@ -242,13 +238,15 @@ body.profile-about-open .about_me_wrapper {
 .project_nav li:hover .title-wrapper,
 .project_nav li.active .title-wrapper,
 .project_nav li:hover .about_button,
-.project_nav li.active .about_button {
+.project_nav li.active .about_button,
+.project_nav li.active .about_project.show {
     background: white;
 }
 
 .title-wrapper {
     padding: 0 0.25rem;
     margin-left: -0.25rem;
+    display: inline-block;
 }
 
 .project_nav li .project_title {
@@ -258,7 +256,8 @@ body.profile-about-open .about_me_wrapper {
 
 .project_nav li .about_button {
     opacity: 0;
-    padding: 0 1rem;
+    padding: 0 0.25rem;
+    margin-left: 0.25rem;
     display: inline-block;
     transition: opacity 0.25s cubic-bezier(.05, .82, .31, .96), transform 0.4s cubic-bezier(.05, .82, .31, .96);
 }
@@ -296,7 +295,8 @@ body.profile-about-open .about_me_wrapper {
 
 .about_project.show {
     display: block;
-    flex-basis: 100%;
+    padding: 0.25rem 0.5rem;
+    margin-top: 0.25rem;
 }
 
 .about_project.show a:hover {
