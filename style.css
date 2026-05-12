@@ -58,6 +58,10 @@ a:not(.socials a)::after {
     display: none;
 }
 
+body.is-fullscreen-open {
+    overflow: hidden;
+}
+
 .left-wrapper,
 .profile-metadata .right-wrapper {
     transition: opacity 0.4s cubic-bezier(.05, .82, .31, .96);

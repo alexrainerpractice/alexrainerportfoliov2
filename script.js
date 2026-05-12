@@ -106,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.appendChild(closeBtn);
 
         document.body.appendChild(overlay);
+        document.body.classList.add('is-fullscreen-open');
 
 
         leftGutter.addEventListener('click', (e) => {
@@ -178,6 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.removeEventListener('keydown', handleKeys);
             if (rafId) cancelAnimationFrame(rafId);
             document.body.classList.remove('is-fullscreen-zoomed');
+            document.body.classList.remove('is-fullscreen-open');
             overlay.remove();
         }
 
