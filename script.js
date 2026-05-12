@@ -309,44 +309,43 @@ document.addEventListener('DOMContentLoaded', () => {
         currentIndexes[carousel.id] = index;
     }
 
-    const SWIPE_STEP = 30; 
-    let startY = 0;
+    const SWIPE_STEP = 40; 
+    let initialX = 0;
+    let initialIndex = 0;
 
     const handleDragStart = (x, y, carousel) => {
         isDragging = true;
         startX = x;
         startY = y;
+        initialX = x;
+        initialIndex = currentIndexes[carousel.id] || 0;
         currentDraggingCarousel = carousel;
     };
 
     const handleDragMove = (x, y, isTouch = false) => {
         if (!isDragging || !currentDraggingCarousel) return;
 
-        const deltaX = x - startX;
-        const deltaY = y - startY;
-
-        if (isTouch && Math.abs(deltaY) > Math.abs(deltaX) * 1.5) {
-            return; 
-        }
-
+        const deltaX = x - initialX;
         const images = currentDraggingCarousel.querySelectorAll('img');
         if (images.length <= 1) return;
         
-        const currentIndex = currentIndexes[currentDraggingCarousel.id];
-
-        if (Math.abs(deltaX) > SWIPE_STEP) {
-            const direction = deltaX > 0 ? -1 : 1;
-            let newIndex = (currentIndex + direction) % images.length;
-            if (newIndex < 0) newIndex = images.length - 1;
+        const steps = Math.round(deltaX / SWIPE_STEP);
+        
+        if (steps !== 0) {
+            let newIndex = (initialIndex - steps) % images.length;
+            if (newIndex < 0) newIndex = images.length + newIndex;
             
-            showImage(currentDraggingCarousel, newIndex);
-            
-            startX = x;
-            startY = y;
+            if (newIndex !== currentIndexes[currentDraggingCarousel.id]) {
+                showImage(currentDraggingCarousel, newIndex);
+            }
         }
     };
 
     const handleDragEnd = () => {
+        if (isDragging && currentDraggingCarousel) {
+            // Optional: flick detection if total movement was small but fast
+            // For now, the absolute distance logic is very solid
+        }
         isDragging = false;
         currentDraggingCarousel = null;
     };
