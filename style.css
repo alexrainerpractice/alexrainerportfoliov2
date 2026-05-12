@@ -400,7 +400,6 @@ body.profile-about-open .about_me_wrapper {
     pointer-events: none;
     user-select: none;
     -webkit-user-drag: none;
-    transition: opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .carousel img.active {
@@ -787,7 +786,6 @@ body.profile-about-open .about_me_wrapper {
         object-fit: contain;
         display: block;
         opacity: 0;
-        transition: opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
     }
 
     .carousel img.active {
