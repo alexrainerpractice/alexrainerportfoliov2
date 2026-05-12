@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentIndexes[carousel.id] = index;
     }
 
-    const SWIPE_STEP = 35; 
+    const SWIPE_STEP = 60; 
     let initialX = 0;
     let initialIndex = 0;
     let startTime = 0;
@@ -331,10 +331,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const images = currentDraggingCarousel.querySelectorAll('img');
         if (images.length <= 1) return;
         
-        const steps = Math.round(deltaX / SWIPE_STEP);
+        const steps = Math.trunc(deltaX / SWIPE_STEP);
         
         if (steps !== 0) {
-            let newIndex = Math.max(0, Math.min(images.length - 1, initialIndex - steps));
+            let newIndex = Math.max(0, Math.min(images.length - 1, initialIndex + steps));
             
             if (newIndex !== currentIndexes[currentDraggingCarousel.id]) {
                 showImage(currentDraggingCarousel, newIndex);
@@ -349,10 +349,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (dt < 250 && Math.abs(dx) > 20) {
                 const images = currentDraggingCarousel.querySelectorAll('img');
-                const steps = Math.round(dx / SWIPE_STEP);
+                const steps = Math.trunc(dx / SWIPE_STEP);
                 
                 if (steps === 0) {
-                    const direction = dx > 0 ? -1 : 1; // Standard direction
+                    const direction = dx > 0 ? 1 : -1;
                     const currentIndex = currentIndexes[currentDraggingCarousel.id];
                     let newIndex = Math.max(0, Math.min(images.length - 1, currentIndex + direction));
                     showImage(currentDraggingCarousel, newIndex);
