@@ -175,6 +175,7 @@ body.photography-active .photography-controls {
 
 body.is-fullscreen-open #grid-close {
     display: inline-flex !important;
+    padding: 0 0.25rem !important;
 }
 
 @media (min-width: 769px) {
