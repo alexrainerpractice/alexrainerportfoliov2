@@ -155,6 +155,10 @@ body.photography-active .photography-controls {
     display: inline-flex !important;
 }
 
+#grid-decrease {
+    padding-bottom: 0.15rem !important; /* Visual alignment for en-dash */
+}
+
 @media (min-width: 769px) {
     .about_button,
     .photography-controls {
@@ -178,10 +182,10 @@ body.is-fullscreen-open #grid-increase {
 }
 
 body.profile-about-open .navigation .about_button {
-    transform: rotate(180deg);
-    background: black;
-    color: white;
-    -webkit-text-stroke: 0.015rem white;
+    transform: rotate(180deg) !important;
+    background: black !important;
+    color: white !important;
+    -webkit-text-stroke: 0.015rem white !important;
 }
 
 .nav-item.active {
@@ -202,7 +206,7 @@ body.profile-about-open .navigation .about_button {
 
 /* Base transition for all nav items */
 .nav-item {
-    transition: background 0.25s cubic-bezier(.05, .82, .31, .96), color 0.25s cubic-bezier(.05, .82, .31, .96);
+    transition: background 0.25s cubic-bezier(.05, .82, .31, .96), color 0.25s cubic-bezier(.05, .82, .31, .96), transform 0.4s cubic-bezier(.05, .82, .31, .96);
 }
 
 .home-link {
