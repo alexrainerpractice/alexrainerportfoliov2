@@ -439,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!e.target.closest('img') || !e.target.closest('.carousel')) {
+        if (!e.target.closest('.carousel')) {
             return;
         }
 
