@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridDecrease = document.getElementById('grid-decrease');
     const gridIncrease = document.getElementById('grid-increase');
     const scales = [0.6, 1.0, 1.6]; // Small, Medium, Big
-    let scaleIndex = 1; // Default to Medium
+    let scaleIndex = 0; // Default to Smallest
 
     if (gridDecrease && gridIncrease) {
         gridDecrease.addEventListener('click', () => {
