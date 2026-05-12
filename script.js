@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const steps = Math.round(deltaX / SWIPE_STEP);
         
         if (steps !== 0) {
-            let newIndex = Math.max(0, Math.min(images.length - 1, initialIndex + steps));
+            let newIndex = Math.max(0, Math.min(images.length - 1, initialIndex - steps));
             
             if (newIndex !== currentIndexes[currentDraggingCarousel.id]) {
                 showImage(currentDraggingCarousel, newIndex);
@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const steps = Math.round(dx / SWIPE_STEP);
                 
                 if (steps === 0) {
-                    const direction = dx > 0 ? 1 : -1;
+                    const direction = dx > 0 ? -1 : 1; // Standard direction
                     const currentIndex = currentIndexes[currentDraggingCarousel.id];
                     let newIndex = Math.max(0, Math.min(images.length - 1, currentIndex + direction));
                     showImage(currentDraggingCarousel, newIndex);
@@ -445,17 +445,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let targetCarousel = e.target.closest('.carousel');
         if (!targetCarousel) return;
 
-        const images = targetCarousel.querySelectorAll('img');
-        if (images.length === 0) return;
-
-        const currentIndex = currentIndexes[targetCarousel.id];
-        if (e.clientX < window.innerWidth / 2) {
-            let newIndex = Math.max(0, currentIndex - 1);
-            showImage(targetCarousel, newIndex);
-        } else {
-            let newIndex = Math.min(images.length - 1, currentIndex + 1);
-            showImage(targetCarousel, newIndex);
-        }
+        // We are removing the side-click navigation to avoid accidental jumps
+        // Clicks on images will no longer trigger navigation
     });
 
 
