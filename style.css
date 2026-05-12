@@ -212,14 +212,6 @@ body.profile-about-open .about_me_wrapper {
 .project_list {
     margin-top: 1rem;
     margin-left: 0.25rem;
-    max-height: 15rem;
-    overflow-y: scroll;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.project_list::-webkit-scrollbar {
-    display: none;
 }
 
 .project_nav li {
