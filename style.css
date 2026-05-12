@@ -194,8 +194,8 @@ body.is-fullscreen-open #grid-close {
 
 @media (max-width: 768px) {
     body.is-fullscreen-open #grid-close {
-        width: 2rem !important;
-        padding: 0 !important;
+        width: fit-content !important;
+        padding: 0 0.25rem !important;
     }
 }
 
