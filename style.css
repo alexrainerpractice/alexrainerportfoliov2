@@ -369,10 +369,15 @@ body.profile-about-open .about_me_wrapper {
     -webkit-text-stroke: 0.015rem white;
 }
 
-.fullscreen-overlay.is-zoomed .nav-gutter span,
+.fullscreen-overlay.is-zoomed .nav-gutter span {
+    display: none;
+}
+
 .fullscreen-overlay.is-zoomed .current-num {
-    opacity: 0.35;
+    opacity: 1;
     background: transparent;
+    top: 0.25rem;
+    bottom: auto;
 }
 
 .fullscreen-overlay.is-zoomed .fullscreen-close {
