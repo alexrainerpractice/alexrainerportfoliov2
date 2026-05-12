@@ -439,11 +439,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        let targetCarousel = e.target.closest('.carousel');
-        if (!targetCarousel) {
-            targetCarousel = activeCarousel;
+        if (!e.target.closest('img') || !e.target.closest('.carousel')) {
+            return;
         }
 
+        let targetCarousel = e.target.closest('.carousel');
         if (!targetCarousel) return;
 
         const images = targetCarousel.querySelectorAll('img');
@@ -543,6 +543,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const counter = carousel.querySelector('.carousel-counter');
         if (counter) {
             counter.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const span = e.target.closest('span');
                 if (span) {
                     const spans = Array.from(counter.querySelectorAll('span'));
