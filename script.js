@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const steps = Math.round(deltaX / SWIPE_STEP);
         
         if (steps !== 0) {
-            let newIndex = (initialIndex - steps) % images.length;
+            let newIndex = (initialIndex + steps) % images.length;
             if (newIndex < 0) newIndex = images.length + newIndex;
             
             if (newIndex !== currentIndexes[currentDraggingCarousel.id]) {
@@ -348,14 +348,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const dx = endX - initialX;
             const dt = Date.now() - startTime;
             
-            // Flick detection: fast movement (under 250ms) over 20px
             if (dt < 250 && Math.abs(dx) > 20) {
                 const images = currentDraggingCarousel.querySelectorAll('img');
                 const steps = Math.round(dx / SWIPE_STEP);
                 
-                // If the distance wasn't enough to trigger a full step yet
                 if (steps === 0) {
-                    const direction = dx > 0 ? -1 : 1;
+                    const direction = dx > 0 ? 1 : -1;
                     let newIndex = (initialIndex + direction) % images.length;
                     if (newIndex < 0) newIndex = images.length - 1;
                     showImage(currentDraggingCarousel, newIndex);
