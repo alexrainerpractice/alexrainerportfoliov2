@@ -479,9 +479,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('touchmove', (e) => {
         if (isDragging) {
-            handleDragMove(e.touches[0].clientX, e.touches[0].clientY, true);
+            const x = e.touches[0].clientX;
+            const y = e.touches[0].clientY;
+            const deltaX = Math.abs(x - startX);
+            const deltaY = Math.abs(y - startY);
+
+            if (deltaX > deltaY) {
+                if (e.cancelable) e.preventDefault();
+            }
+
+            handleDragMove(x, y, true);
         }
-    }, { passive: true });
+    }, { passive: false });
 
     document.addEventListener('touchend', handleDragEnd);
     document.addEventListener('touchcancel', handleDragEnd);
