@@ -48,7 +48,6 @@ a:not(.socials a)::after {
     max-width: 80%;
     z-index: 10;
     pointer-events: none;
-    mix-blend-mode: screen;
 }
 
 .left-wrapper>* {
@@ -70,7 +69,6 @@ body.profile-about-open .profile-metadata {
     z-index: 10;
     pointer-events: auto;
     text-align: right;
-    mix-blend-mode: screen;
 }
 
 .information {
@@ -247,7 +245,6 @@ body.profile-about-open .about_me_wrapper {
 
 .title-wrapper {
     padding: 0 0.25rem;
-    margin-left: -0.25rem;
     display: inline-block;
 }
 
@@ -260,7 +257,6 @@ body.profile-about-open .about_me_wrapper {
     opacity: 0;
     width: 3rem;
     text-align: center;
-    margin-left: 0.25rem;
     display: inline-block;
     transition: opacity 0.25s cubic-bezier(.05, .82, .31, .96), transform 0.4s cubic-bezier(.05, .82, .31, .96);
 }
@@ -301,7 +297,7 @@ body.profile-about-open .about_me_wrapper {
 
 .about_project.show {
     display: block;
-    padding: 0.25rem;
+    padding-left: .25rem;
     margin-top: 0.25rem;
 }
 
@@ -354,7 +350,7 @@ body.profile-about-open .about_me_wrapper {
 
 .fullscreen-close {
     position: absolute;
-    top: 0.25rem;
+    bottom: 0.25rem;
     right: 0.25rem;
     background: white;
     padding: 0 0.25rem;
