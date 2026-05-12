@@ -73,6 +73,12 @@ body.is-fullscreen-zoomed .profile-metadata .right-wrapper {
     pointer-events: none;
 }
 
+body.profile-about-open .left-wrapper,
+body.profile-about-open .profile-metadata .right-wrapper {
+    opacity: 1;
+    pointer-events: auto;
+}
+
 body.profile-about-open .profile-metadata {
     display: block;
 }
