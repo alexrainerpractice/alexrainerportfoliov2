@@ -1,4 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Disable pinch-to-zoom on iOS
+    document.addEventListener('gesturestart', (e) => {
+        e.preventDefault();
+    }, { passive: false });
+
+    // Disable double-tap to zoom on iOS
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (e) => {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            e.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, { passive: false });
+
     const body = document.body;
 
     function updateAboutState() {
