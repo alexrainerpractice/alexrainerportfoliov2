@@ -140,6 +140,12 @@ document.addEventListener('DOMContentLoaded', () => {
             currentIndex = index;
             const targetImg = allPhotos[currentIndex];
             fullImg.src = targetImg.src;
+            
+            // Detect orientation for adaptive zoom
+            const isHorizontal = targetImg.naturalWidth > targetImg.naturalHeight;
+            fullImg.classList.toggle('is-horizontal', isHorizontal);
+            fullImg.classList.toggle('is-vertical', !isHorizontal);
+
             fullImg.classList.remove('zoomed');
             overlay.classList.remove('is-zoomed');
             if (rafId) cancelAnimationFrame(rafId);
