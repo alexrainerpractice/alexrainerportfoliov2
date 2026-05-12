@@ -402,11 +402,13 @@ body.profile-about-open .about_me_wrapper {
     pointer-events: none;
     user-select: none;
     -webkit-user-drag: none;
+    transition: none !important;
 }
 
 .carousel img.active {
     opacity: 1;
     pointer-events: auto;
+    transition: none !important;
 }
 
 .carousel-counter {
