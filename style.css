@@ -1069,30 +1069,34 @@ body.profile-about-open .about_me_wrapper {
         max-width: 100%;
     }
 
-    /* Base widths to encourage varied wrapping */
+    /* Base widths to encourage more small images per row */
     .photo-item:nth-child(odd),
     .photo-item:nth-child(3n+1) {
-        width: 35%;
+        width: 20%;
     }
 
     .photo-item:nth-child(even),
     .photo-item:nth-child(3n+2) {
-        width: 55%;
+        width: 30%;
     }
 
     .photo-item:nth-child(4n) {
-        width: 100%;
+        width: 60%;
     }
 
     .photo-item:nth-child(5n) {
-        width: 45%;
+        width: 25%;
+    }
+
+    /* Periodic full-width or large standout shots */
+    .photo-item:nth-child(7n) {
+        width: 100%;
     }
 
     /* Ensure specific rhythmic variation */
-    .photo-item:nth-child(1) { width: 40%; }
-    .photo-item:nth-child(2) { width: 60%; }
-    .photo-item:nth-child(3) { width: 100%; }
-    .photo-item:nth-child(6) { width: 30%; }
-    .photo-item:nth-child(7) { width: 70%; }
-    .photo-item:nth-child(8) { width: 100%; }
+    .photo-item:nth-child(1) { width: 25%; }
+    .photo-item:nth-child(2) { width: 35%; }
+    .photo-item:nth-child(3) { width: 40%; }
+    .photo-item:nth-child(6) { width: 20%; }
+    .photo-item:nth-child(8) { width: 80%; }
 }
