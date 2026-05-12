@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlexRainerPractice</title>
+
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <div id="main_content">
+
+        <div class="left-wrapper">
+            <div class="navigation">
+                <div class="nav-row">
+                    <a href="./" class="nav-item home-link"><h1>Alex Rainer</h1></a>
+                    <span class="nav-item about_button">?</span>
+                </div>
+                <div class="nav-row view-toggle">
+                    <span id="toggle-editorial" class="nav-item active">Editorial</span>
+                    <span id="toggle-photography" class="nav-item">Photography</span>
+                </div>
+            </div>
+
+            <div class="about_me_wrapper">
+                <span class="about_me">{{ABOUT_ME}}</span>
+                <div class="profile-metadata">
+                    <div class="socials">
+                        <a href="https://www.are.na/alex-rainer" target="_blank">are.na</a>
+                        <a href="mailto:rainer.alex@outlook.com">e-Mail</a>
+                        <a href="https://www.instagram.com/rnr.alx" target="_blank">Instagram</a>
+                    </div>
+                    <div class="right-wrapper">
+                        <p>©{{BUILD_YEAR}} — Last update: {{BUILD_MONTH}} {{BUILD_YEAR}}</p>
+                        <p>The Hague, NL</p>
+                        <p id="dynamic-time"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project_list" id="editorial-list">
+                <ul class="project_nav">
+                    {{EDITORIAL_PROJECT_LINKS}}
+                </ul>
+            </div>
+
+        </div>
+
+        <div id="photography-gallery-view" style="display: none;">
+            <div class="photography-grid">
+                {{PHOTOGRAPHY_GALLERY}}
+            </div>
+        </div>
+
+        <div class="middle-wrapper">
+            {{EDITORIAL_PROJECT_CAROUSELS}}
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
