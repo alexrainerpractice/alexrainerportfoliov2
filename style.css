@@ -871,6 +871,13 @@ body.profile-about-open .about_me_wrapper {
         text-align: center;
     }
 
+    body.is-fullscreen-open .home-link,
+    body.is-fullscreen-open .about_button,
+    body.is-fullscreen-open #toggle-editorial,
+    body.is-fullscreen-open #toggle-photography {
+        display: none !important;
+    }
+
     .nav-item {
         margin: 0;
         padding: 0 0.25rem;
