@@ -67,7 +67,7 @@ a:not(.socials a):not(.home-link a):not(.nav-item a):not(.project_title a)::afte
 
 body.profile-about-open .left-wrapper .about_button {
     transform: rotate(180deg) !important;
-    background: black !important;
+    background: #3c2a21 !important;
     color: white !important;
     -webkit-text-stroke: 0.015rem white !important;
     opacity: 1 !important;
@@ -175,11 +175,16 @@ body.photography-active .photography-controls {
 }
 
 @media (min-width: 769px) {
+    body {
+        -webkit-user-select: none;
+        user-select: none;
+    }
 
     .about_button,
     .photography-controls {
-        width: 3rem !important;
-        padding: 0 !important;
+        width: fit-content;
+        min-width: 3rem;
+        padding: 0 0.25rem;
     }
 }
 
@@ -218,7 +223,7 @@ body.is-fullscreen-open #grid-close {
     }
 
     body.is-fullscreen-open #grid-close:hover {
-        background: black !important;
+        background: #3c2a21 !important;
         color: white !important;
     }
 }
@@ -227,12 +232,12 @@ body.is-fullscreen-open #grid-decrease,
 body.is-fullscreen-open #grid-increase {
     display: none !important;
 }
-}
+
 
 
 
 .nav-item.active {
-    background: black;
+    background: #3c2a21;
     color: white;
     -webkit-text-stroke: 0.015rem white;
 }
@@ -241,7 +246,7 @@ body.is-fullscreen-open #grid-increase {
 
     .nav-item:hover,
     .nav-item:active {
-        background: black;
+        background: #3c2a21;
         color: white;
         -webkit-text-stroke: 0.015rem white;
     }
@@ -258,16 +263,11 @@ body.is-fullscreen-open #grid-increase {
     width: fit-content;
 }
 
-.home-link:hover,
-.home-link:active {
-    /* Base background transition */
-}
-
 @media (hover: hover) {
 
     .home-link:hover,
     .home-link:active {
-        background: black;
+        background: #3c2a21;
     }
 
     .home-link:hover *,
@@ -297,7 +297,7 @@ body.is-fullscreen-open #grid-increase {
 .view-toggle .nav-item:hover,
 .view-toggle .nav-item:active {
     opacity: 1;
-    background: black;
+    background: #3c2a21;
     color: white;
     -webkit-text-stroke: 0.015rem white;
 }
@@ -375,7 +375,7 @@ body.profile-about-open .about_me_wrapper {
 
     .project_nav li.active .title-wrapper,
     .project_nav li.active .about_button {
-        border: 0.5px solid black;
+        border: none;
     }
 }
 
@@ -394,14 +394,14 @@ body.profile-about-open .about_me_wrapper {
     list-style: none;
     cursor: pointer;
     width: fit-content;
-    transition: padding-left 0.25s cubic-bezier(.05, .82, .31, .96);
+    transition: padding 0.25s cubic-bezier(.05, .82, .31, .96);
     padding: 0;
 }
 
 .project_nav li:hover,
 .project_nav li:active,
 .project_nav li.active {
-    padding-left: 0.25rem;
+    padding: 0 0.25rem;
 }
 
 .project_nav li:hover .title-wrapper,
@@ -410,10 +410,22 @@ body.profile-about-open .about_me_wrapper {
 .project_nav li:hover .about_button,
 .project_nav li:active .about_button,
 .project_nav li.active .about_button {
-    background: white;
+    background: #3c2a21;
+    color: white !important;
+    -webkit-text-stroke: 0.015rem white !important;
 }
 
-/* Ensure the about button stays inverted when the description is open */
+.project_nav li:hover .title-wrapper *,
+.project_nav li:active .title-wrapper *,
+.project_nav li.active .title-wrapper *,
+.project_nav li:hover .about_button *,
+.project_nav li:active .about_button *,
+.project_nav li.active .about_button * {
+    color: white !important;
+    -webkit-text-stroke: 0.015rem white !important;
+}
+
+/* Ensure the about button stays black when the description is open */
 .project_nav li:has(.about_project.show) .about_button {
     background: black !important;
     color: white !important;
@@ -423,7 +435,18 @@ body.profile-about-open .about_me_wrapper {
 }
 
 .project_nav li.active .about_project.show {
-    background: white;
+    background: #3c2a21;
+    color: white !important;
+    padding: 0.25rem;
+}
+
+.project_nav li.active .about_project.show * {
+    color: white !important;
+    -webkit-text-stroke: 0.015rem white !important;
+}
+
+.project_nav li.active .about_project.show a {
+    text-decoration: none !important;
 }
 
 .title-wrapper {
@@ -452,9 +475,9 @@ body.profile-about-open .about_me_wrapper {
 }
 
 .nav-item.about_button {
-    width: 3rem;
+    width: fit-content;
+    padding: 0.25rem;
     text-align: center;
-    padding: 0;
 }
 
 .project_nav li:hover .project_title,
@@ -570,7 +593,7 @@ body.profile-about-open .about_me_wrapper {
 
 .fullscreen-close:hover,
 .fullscreen-close:active {
-    background: black;
+    background: #3c2a21;
     color: white;
     -webkit-text-stroke: 0.015rem white;
 }
@@ -685,6 +708,13 @@ body.profile-about-open .about_me_wrapper {
     align-items: center;
     flex-shrink: 0;
     width: calc(var(--base-w, 20%) * var(--photo-grid-scale, 1));
+    transition: margin 0.25s cubic-bezier(.05, .82, .31, .96);
+}
+
+@media (min-width: 769px) {
+    .photo-item:hover {
+        margin: 0 0.25rem;
+    }
 }
 
 
