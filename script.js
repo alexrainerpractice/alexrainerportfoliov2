@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.toggle('about-open', !!anyVisible);
     }
 
-
     function updateDate() {
         const timeEl = document.getElementById('dynamic-time');
         if (timeEl) {
@@ -35,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     updateDate();
     setInterval(updateDate, 60000);
-
 
     const toggleEditorial = document.getElementById('toggle-editorial');
     const togglePhotography = document.getElementById('toggle-photography');
@@ -94,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
     document.addEventListener('click', (e) => {
         const img = e.target.closest('.photo-item img');
         if (!img) return;
@@ -103,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const allPhotos = Array.from(document.querySelectorAll('.photo-item img'));
         let currentIndex = allPhotos.indexOf(img);
-
 
         const overlay = document.createElement('div');
         overlay.className = 'fullscreen-overlay';
@@ -123,10 +119,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentBtn = document.createElement('span');
         currentBtn.className = 'current-num';
 
+        const projectLink = document.createElement('div');
+        projectLink.className = 'project-link-overlay';
+        projectLink.style.display = 'none';
+
+        const photoDesc = document.createElement('div');
+        photoDesc.className = 'photo-description-overlay';
+        photoDesc.style.display = 'none';
+
         overlay.appendChild(leftGutter);
         overlay.appendChild(fullImg);
         overlay.appendChild(rightGutter);
         overlay.appendChild(currentBtn);
+        overlay.appendChild(projectLink);
+        overlay.appendChild(photoDesc);
 
         document.body.appendChild(overlay);
         document.body.classList.add('is-fullscreen-open');
@@ -136,7 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
             gridClose.addEventListener('click', closeFullscreen, { once: true });
         }
 
-
         leftGutter.addEventListener('click', (e) => {
             updateFullscreenView(currentIndex - 1);
         });
@@ -144,9 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
         rightGutter.addEventListener('click', (e) => {
             updateFullscreenView(currentIndex + 1);
         });
-
-
-
 
         let targetX = 50, targetY = 50;
         let currentX = 50, currentY = 50;
@@ -168,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentIndex = index;
             const targetImg = allPhotos[currentIndex];
             fullImg.src = targetImg.src;
-            
+
             // Detect orientation for adaptive zoom
             const isHorizontal = targetImg.naturalWidth > targetImg.naturalHeight;
             fullImg.classList.toggle('is-horizontal', isHorizontal);
@@ -193,10 +195,37 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 nextBtn.style.visibility = 'hidden';
             }
+
+            // Project link logic
+            const photoItem = targetImg.closest('.photo-item');
+            const projectId = photoItem?.getAttribute('data-project-id');
+            const projectTitle = photoItem?.getAttribute('data-project-title');
+
+            if (projectId && projectTitle) {
+                projectLink.innerHTML = `Related Project: <span class="project-title-link">${projectTitle}</span>`;
+                projectLink.style.display = 'block';
+                projectLink.onclick = (e) => {
+                    e.stopPropagation();
+                    closeFullscreen();
+                    const toggleEditorial = document.getElementById('toggle-editorial');
+                    if (toggleEditorial) toggleEditorial.click();
+                    setTimeout(() => scrollToProject(projectId), 100);
+                };
+            } else {
+                projectLink.style.display = 'none';
+            }
+
+            // Description logic
+            const description = photoItem?.getAttribute('data-description');
+            if (description && description.trim() !== '') {
+                photoDesc.innerHTML = description;
+                photoDesc.style.display = 'block';
+            } else {
+                photoDesc.style.display = 'none';
+            }
         }
 
         updateFullscreenView(currentIndex);
-
 
         const handleKeys = (e) => {
             if (e.key === 'ArrowRight') {
@@ -217,13 +246,11 @@ document.addEventListener('DOMContentLoaded', () => {
             overlay.remove();
         }
 
-
         overlay.addEventListener('click', (e) => {
             if (e.target === overlay) {
 
             }
         });
-
 
         fullImg.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -250,7 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-
         let startX, startY;
         let lastX = 50, lastY = 50;
         let lastTap = 0;
@@ -271,11 +297,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const x = e.touches[0].clientX;
             const deltaX = x - overlayStartX;
             const steps = Math.round(deltaX / SWIPE_STEP);
-            
+
             if (steps !== 0) {
                 let newIndex = (overlayInitialIndex + steps) % allPhotos.length;
                 if (newIndex < 0) newIndex = allPhotos.length + newIndex;
-                
+
                 if (newIndex !== currentIndex) {
                     updateFullscreenView(newIndex);
                 }
@@ -328,7 +354,6 @@ document.addEventListener('DOMContentLoaded', () => {
             lastTap = currentTime;
         });
 
-
         prevBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             updateFullscreenView(currentIndex - 1);
@@ -339,7 +364,6 @@ document.addEventListener('DOMContentLoaded', () => {
             updateFullscreenView(currentIndex + 1);
         });
     });
-
 
     const mainAboutBtn = document.querySelector('.navigation .about_button');
     const aboutMe = document.querySelector('.about_me');
@@ -394,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentIndexes[carousel.id] = index;
     }
 
-    const SWIPE_STEP = 35; 
+    const SWIPE_STEP = 35;
     let initialX = 0;
     let initialIndex = 0;
     let startTime = 0;
@@ -415,13 +439,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const deltaX = x - initialX;
         const images = currentDraggingCarousel.querySelectorAll('img');
         if (images.length <= 1) return;
-        
+
         const steps = Math.round(deltaX / SWIPE_STEP);
-        
+
         if (steps !== 0) {
             let newIndex = (initialIndex + steps) % images.length;
             if (newIndex < 0) newIndex = images.length + newIndex;
-            
+
             if (newIndex !== currentIndexes[currentDraggingCarousel.id]) {
                 showImage(currentDraggingCarousel, newIndex);
             }
@@ -432,11 +456,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isDragging && currentDraggingCarousel) {
             const dx = endX - initialX;
             const dt = Date.now() - startTime;
-            
+
             if (dt < 250 && Math.abs(dx) > 20) {
                 const images = currentDraggingCarousel.querySelectorAll('img');
                 const steps = Math.round(dx / SWIPE_STEP);
-                
+
                 if (steps === 0) {
                     const direction = dx > 0 ? 1 : -1;
                     let newIndex = (initialIndex + direction) % images.length;
@@ -450,15 +474,21 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const observerOptions = {
-        threshold: 0.7
+        threshold: [0, 0.7]
     };
 
     const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+        // Sort entries by ratio so the most visible one wins if multiple fire at once
+        const sortedEntries = [...entries].sort((a, b) => a.intersectionRatio - b.intersectionRatio);
+
+        sortedEntries.forEach(entry => {
             const carousel = entry.target;
+
+            // Toggle counter visibility based on any intersection
             carousel.classList.toggle('show-counter', entry.isIntersecting);
 
-            if (entry.isIntersecting) {
+            // Only switch active project highlight if highly visible (0.7 threshold)
+            if (entry.isIntersecting && entry.intersectionRatio >= 0.7) {
                 activeCarousel = carousel;
                 const projectId = carousel.id.replace('carousel-', '');
 
@@ -551,7 +581,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-
     document.addEventListener('mousedown', (e) => {
         const carousel = e.target.closest('.carousel');
         if (carousel) handleDragStart(e.clientX, e.clientY, carousel);
@@ -590,7 +619,7 @@ document.addEventListener('DOMContentLoaded', () => {
             isDragging = true;
             dragDirection = null;
             currentDraggingCarousel = carousel;
-            
+
             const touch = e.touches[0];
             initialX = touch.clientX;
             startX = touch.clientX;

@@ -14,9 +14,6 @@ body {
     color: black;
 }
 
-
-
-
 a {
     position: relative;
     text-decoration: none;
@@ -197,6 +194,10 @@ body.is-fullscreen-open #grid-close {
     padding: 0 0.25rem !important;
 }
 
+body.is-fullscreen-zoomed #grid-close {
+    display: none !important;
+}
+
 @media (max-width: 768px) {
     body.is-fullscreen-open #grid-close {
         flex: none !important;
@@ -232,9 +233,6 @@ body.is-fullscreen-open #grid-decrease,
 body.is-fullscreen-open #grid-increase {
     display: none !important;
 }
-
-
-
 
 .nav-item.active {
     background: #3c2a21;
@@ -461,7 +459,7 @@ body.profile-about-open .about_me_wrapper {
 
 .project_nav li .about_button {
     opacity: 0;
-    background: white;
+    background: transparent;
     width: 2rem;
     text-align: center;
     display: inline-block;
@@ -475,9 +473,20 @@ body.profile-about-open .about_me_wrapper {
 }
 
 .nav-item.about_button {
+    background: white;
     width: fit-content;
     padding: 0.25rem;
     text-align: center;
+}
+
+@media (hover: hover) {
+
+    .nav-item.about_button:hover,
+    .nav-item.about_button:active {
+        background: #3c2a21;
+        color: white;
+        -webkit-text-stroke: 0.015rem white;
+    }
 }
 
 .project_nav li:hover .project_title,
@@ -552,8 +561,6 @@ body.profile-about-open .about_me_wrapper {
     transition: all 0.25s cubic-bezier(.05, .82, .31, .96);
 }
 
-
-
 .fullscreen-overlay.is-zoomed .nav-gutter span {
     display: none;
 }
@@ -566,7 +573,7 @@ body.profile-about-open .about_me_wrapper {
 }
 
 .fullscreen-overlay.is-zoomed .fullscreen-close {
-    opacity: 1;
+    display: none !important;
 }
 
 .fullscreen-overlay.is-zoomed .fullscreen-close:hover {
@@ -598,6 +605,67 @@ body.profile-about-open .about_me_wrapper {
     -webkit-text-stroke: 0.015rem white;
 }
 
+.photo-description-overlay {
+    position: absolute;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #3c2a21;
+    font-size: 0.85rem;
+    z-index: 30;
+    pointer-events: none;
+    text-align: center;
+    width: 90%;
+    max-width: 600px;
+}
+
+@media (max-width: 768px) {
+    body.is-fullscreen-zoomed .project-link-overlay {
+        display: none !important;
+    }
+}
+
+.project-link-overlay {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: black;
+    padding: 0;
+
+    cursor: pointer;
+    z-index: 30;
+    transition: all 0.25s cubic-bezier(.05, .82, .31, .96);
+    white-space: nowrap;
+}
+
+.project-title-link {
+    display: inline-flex;
+    align-items: center;
+    background: #3c2a21;
+    color: white;
+    padding: 0 0.25rem;
+    -webkit-text-stroke: 0.015rem white;
+    margin-left: 0.25rem;
+    height: 1.5rem;
+    box-sizing: border-box;
+    transition: all 0.25s cubic-bezier(.05, .82, .31, .96);
+}
+
+.project-link-overlay:hover .project-title-link {
+    background: black;
+    color: white;
+    -webkit-text-stroke: 0.015rem white;
+}
+
+@media (min-width: 769px) {
+    .project-link-overlay {
+        left: 0.25rem;
+        bottom: 0.25rem;
+        transform: none;
+    }
+}
+
 .carousel {
     display: block;
     width: 100%;
@@ -607,7 +675,6 @@ body.profile-about-open .about_me_wrapper {
     align-items: center;
     position: relative;
 }
-
 
 .socials a {
     display: flex;
@@ -716,7 +783,6 @@ body.profile-about-open .about_me_wrapper {
         margin: 0 0.25rem;
     }
 }
-
 
 .photo-item:nth-child(1) {
     --base-w: 10%;
@@ -853,6 +919,7 @@ body.profile-about-open .about_me_wrapper {
     background: transparent;
     padding: 0 0.25rem;
     min-width: fit-content;
+    height: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -862,9 +929,6 @@ body.profile-about-open .about_me_wrapper {
     z-index: 10;
     transition: all 0.25s cubic-bezier(.05, .82, .31, .96);
 }
-
-
-
 
 .carousel-counter {
     display: flex;
@@ -897,7 +961,6 @@ body.profile-about-open .about_me_wrapper {
         padding: 0 0.4rem;
     }
 }
-
 
 @media (max-width: 768px) {
     * {
@@ -969,6 +1032,10 @@ body.profile-about-open .about_me_wrapper {
         text-align: center;
         padding: 0;
         margin-left: 0 !important;
+        background: transparent;
+    }
+
+    .nav-item.about_button {
         background: white;
     }
 
@@ -1033,10 +1100,6 @@ body.profile-about-open .about_me_wrapper {
         padding: 0 0.25rem;
     }
 
-
-
-
-
     .socials,
     .right-wrapper {
         display: none;
@@ -1063,7 +1126,6 @@ body.profile-about-open .about_me_wrapper {
         z-index: 20;
         top: auto;
     }
-
 
     .carousel {
         margin-bottom: 0;
@@ -1122,9 +1184,6 @@ body.profile-about-open .about_me_wrapper {
         max-height: 1.25rem;
         margin-top: -0.1rem;
     }
-
-
-
 
     .fullscreen-overlay {
         display: grid;
