@@ -638,8 +638,7 @@ body.profile-about-open .about_me_wrapper {
     top: 1.5rem;
     left: 50%;
     transform: translateX(-50%);
-    color: #3c2a21;
-    font-size: 0.85rem;
+    color: black;
     z-index: 30;
     pointer-events: none;
     text-align: center;
@@ -1075,10 +1074,6 @@ body.profile-about-open .about_me_wrapper {
         width: fit-content;
         box-sizing: border-box;
         overflow: hidden;
-    }
-
-    .home-link h1 {
-        font-size: 0.9rem;
     }
 
     .about_button {
