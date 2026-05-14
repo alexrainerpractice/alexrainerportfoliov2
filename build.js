@@ -33,7 +33,7 @@ async function fetchAllArenaContents(channelSlug) {
         const data = await fetchArena(`channels/${channelSlug}/contents?per=${per}&page=${page}`);
         const contents = data.contents || data.data || [];
         allContents = allContents.concat(contents);
-        
+
         if (contents.length < per) {
             hasMore = false;
         } else {
@@ -94,8 +94,8 @@ async function build() {
                     imageToProjectMap[img.id] = { id: projId, title: displayTitle };
                 });
 
-                const labelHTML = isInProgress 
-                    ? '<span class="in_progress_label">In Progress</span>' 
+                const labelHTML = isInProgress
+                    ? '<span class="in_progress_label">In Progress...</span>'
                     : '<span class="about_button">?</span>';
 
                 projectLinksHTML += `
@@ -110,12 +110,12 @@ async function build() {
 
                 let carouselImagesHTML = images.map((img, imgIndex) => {
                     const imgUrl = img.image.large ? img.image.large.src : img.image.src;
-                    
+
                     // Handle image credits from description
                     let creditHTML = '';
                     const rawDesc = img.description || '';
                     const description = typeof rawDesc === 'string' ? rawDesc : (rawDesc.plain || '');
-                    
+
                     if (description.toLowerCase().includes('picture taken by')) {
                         const match = description.match(/Picture taken by\s*(?:\[(.*?)\]|:?\s*([^\(\n]+))\s*(?:\((.*?)\))?/i);
                         if (match) {
@@ -167,11 +167,11 @@ ${carouselImagesHTML}
                     // Ensure description is a string and handle nulls
                     const rawDesc = item.description || '';
                     const description = typeof rawDesc === 'string' ? rawDesc : (rawDesc.plain || '');
-                    
-                    const dataAttrs = projectInfo 
-                        ? `data-project-id="${projectInfo.id}" data-project-title="${projectInfo.title}"` 
+
+                    const dataAttrs = projectInfo
+                        ? `data-project-id="${projectInfo.id}" data-project-title="${projectInfo.title}"`
                         : '';
-                    
+
                     return `                <div class="photo-item" ${dataAttrs} data-description="${description.replace(/"/g, '&quot;')}"><img src="${thumbUrl}" data-large="${largeUrl}" loading="lazy" onload="this.classList.add('loaded')"><span>${index + 1}</span></div>`;
                 })
                 .join('\n');
