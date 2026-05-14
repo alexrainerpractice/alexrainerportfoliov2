@@ -68,7 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridDecrease = document.getElementById('grid-decrease');
     const gridIncrease = document.getElementById('grid-increase');
     const scales = [0.6, 1.0, 1.6]; // Small, Medium, Big
-    let scaleIndex = 0; // Default to Smallest
+    // Default: Medium (1) on mobile, Large (2) on desktop
+    let scaleIndex = window.innerWidth <= 768 ? 1 : 2;
 
     if (gridDecrease && gridIncrease) {
         gridDecrease.addEventListener('click', () => {
@@ -91,6 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
             grid.style.setProperty('--photo-grid-scale', scales[scaleIndex]);
         }
     }
+    // Apply initial scale
+    updateGridScale();
 
     document.addEventListener('click', (e) => {
         const img = e.target.closest('.photo-item img');

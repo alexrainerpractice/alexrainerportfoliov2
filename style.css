@@ -764,23 +764,32 @@ body.profile-about-open .about_me_wrapper {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: flex-start;
     padding: 0;
     margin-top: 5rem;
-    --photo-grid-scale: 0.6;
+    --photo-grid-scale: 1.6; /* Desktop default */
+}
+
+@media (max-width: 768px) {
+    .photography-grid {
+        --photo-grid-scale: 1.0; /* Mobile default */
+    }
 }
 
 .photo-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex-shrink: 0;
-    width: calc(var(--base-w, 20%) * var(--photo-grid-scale, 1));
-    transition: margin 0.25s cubic-bezier(.05, .82, .31, .96);
+    flex-shrink: 1;
+    flex-grow: 1;
+    flex-basis: calc((var(--base-w, 20%) * var(--photo-grid-scale, 1)) * 0.98);
+    margin: 0;
+    transition: margin 0.4s cubic-bezier(.05, .82, .31, .96);
 }
 
 @media (min-width: 769px) {
     .photo-item:hover {
-        margin: 0 0.25rem;
+        margin: 0 0.4rem;
     }
 }
 
