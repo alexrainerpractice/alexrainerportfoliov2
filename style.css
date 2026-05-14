@@ -757,13 +757,9 @@ body.profile-about-open .about_me_wrapper {
 }
 
 .photo-item img {
-    transition: opacity 0.5s ease;
 }
 
-.photo-item img.loaded {
-    opacity: 1;
-}
-
+.photo-item img.loaded,
 .carousel img.active.loaded {
     opacity: 1;
     pointer-events: auto;
@@ -785,9 +781,17 @@ body.profile-about-open .about_me_wrapper {
 
 .counter-track {
     display: flex;
+    justify-content: center;
     transition: transform 0.4s cubic-bezier(.05, .82, .31, .96);
     width: fit-content;
     min-width: 100%;
+}
+
+@media (max-width: 768px) {
+    .counter-track {
+        justify-content: flex-start;
+        padding-left: 0;
+    }
 }
 
 .carousel.show-counter .carousel-counter {

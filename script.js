@@ -172,7 +172,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
             currentIndex = index;
             const targetImg = allPhotos[currentIndex];
-            fullImg.src = targetImg.getAttribute('data-large') || targetImg.src;
+            const largeUrl = targetImg.getAttribute('data-large');
+
+            // Show thumbnail immediately (low-res but instant)
+            fullImg.src = targetImg.src;
+
+            // Load high-res in background
+            if (largeUrl) {
+                const highResLoader = new Image();
+                highResLoader.onload = () => {
+                    // Only update if we haven't swiped away already
+                    if (currentIndex === index) {
+                        fullImg.src = largeUrl;
+                    }
+                };
+                highResLoader.src = largeUrl;
+            }
+
+            // Preload neighbors (next and previous 2 images)
+            for (let i = 1; i <= 2; i++) {
+                const nextIdx = (currentIndex + i) % allPhotos.length;
+                const prevIdx = (currentIndex - i + allPhotos.length) % allPhotos.length;
+                [nextIdx, prevIdx].forEach(idx => {
+                    const preloadUrl = allPhotos[idx].getAttribute('data-large');
+                    if (preloadUrl) {
+                        const img = new Image();
+                        img.src = preloadUrl;
+                    }
+                });
+            }
 
             // Detect orientation for adaptive zoom
             const isHorizontal = targetImg.naturalWidth > targetImg.naturalHeight;
