@@ -767,12 +767,16 @@ body.profile-about-open .about_me_wrapper {
     justify-content: flex-start;
     padding: 0;
     margin-top: 5rem;
-    --photo-grid-scale: 1.6; /* Desktop default */
+    --photo-grid-scale: 1.6;
+    /* Desktop default */
 }
 
 @media (max-width: 768px) {
     .photography-grid {
-        --photo-grid-scale: 1.0; /* Mobile default */
+        --photo-grid-scale: 1.0;
+        /* Mobile default */
+        margin-top: 0;
+
     }
 }
 
@@ -790,6 +794,11 @@ body.profile-about-open .about_me_wrapper {
 @media (min-width: 769px) {
     .photo-item:hover {
         margin: 0 0.4rem;
+    }
+
+    .photography-grid::after {
+        content: "";
+        flex: 1000 1 0%;
     }
 }
 
