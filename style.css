@@ -971,7 +971,7 @@ body.profile-about-open .about_me_wrapper {
 }
 
 .fullscreen-overlay img.zoomed.is-horizontal {
-    transform: scale(3.5);
+    transform: scale(2.8);
 }
 
 .fullscreen-overlay img.zoomed.is-vertical {

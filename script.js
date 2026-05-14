@@ -68,8 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridDecrease = document.getElementById('grid-decrease');
     const gridIncrease = document.getElementById('grid-increase');
     const scales = [0.6, 1.0, 1.6]; // Small, Medium, Big
-    // Default: Medium (1) on mobile, Large (2) on desktop
-    let scaleIndex = window.innerWidth <= 768 ? 1 : 2;
+    // Default: Small (0) on mobile, Medium (1) on desktop
+    let scaleIndex = window.innerWidth <= 768 ? 0 : 1;
 
     if (gridDecrease && gridIncrease) {
         gridDecrease.addEventListener('click', () => {
@@ -488,6 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let initialX = 0;
     let initialIndex = 0;
     let startTime = 0;
+    let lastDragTime = 0;
 
     const handleDragStart = (x, y, carousel) => {
         isDragging = true;
@@ -506,34 +507,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const images = currentDraggingCarousel.querySelectorAll('img');
         if (images.length <= 1) return;
 
+        const SWIPE_STEP = 60; // Increased for more stable control
         const steps = Math.round(deltaX / SWIPE_STEP);
 
-        if (steps !== 0) {
-            let newIndex = (initialIndex + steps) % images.length;
-            if (newIndex < 0) newIndex = images.length + newIndex;
+        // Calculate new index based on initial position and drag distance
+        // Swipe left (negative deltaX) should increase index
+        let newIndex = (initialIndex - steps) % images.length;
+        if (newIndex < 0) newIndex = images.length + newIndex;
 
-            if (newIndex !== currentIndexes[currentDraggingCarousel.id]) {
-                showImage(currentDraggingCarousel, newIndex);
-            }
+        if (newIndex !== currentIndexes[currentDraggingCarousel.id]) {
+            showImage(currentDraggingCarousel, newIndex);
         }
     };
 
     const handleDragEnd = (endX) => {
         if (isDragging && currentDraggingCarousel) {
-            const dx = endX - initialX;
-            const dt = Date.now() - startTime;
-
-            if (dt < 250 && Math.abs(dx) > 20) {
-                const images = currentDraggingCarousel.querySelectorAll('img');
-                const steps = Math.round(dx / SWIPE_STEP);
-
-                if (steps === 0) {
-                    const direction = dx > 0 ? 1 : -1;
-                    let newIndex = (initialIndex + direction) % images.length;
-                    if (newIndex < 0) newIndex = images.length - 1;
-                    showImage(currentDraggingCarousel, newIndex);
-                }
-            }
+            lastDragTime = Date.now();
         }
         isDragging = false;
         currentDraggingCarousel = null;
@@ -673,6 +662,11 @@ document.addEventListener('DOMContentLoaded', () => {
             e.target.closest('.carousel-counter') ||
             e.target.closest('.socials') ||
             e.target.closest('.project_nav')) {
+            return;
+        }
+
+        // Block click if we just finished a drag to prevent double-swiping
+        if (Date.now() - lastDragTime < 300) {
             return;
         }
 
