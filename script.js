@@ -463,10 +463,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const projectId = carousel.id.replace('carousel-', '');
 
                 projectLinks.forEach(link => {
-                    link.classList.toggle('active', link.getAttribute('data-project') === projectId);
+                    const isActive = link.getAttribute('data-project') === projectId;
+                    link.classList.toggle('active', isActive);
+                    if (!isActive) {
+                        const desc = link.querySelector('.about_project');
+                        if (desc) desc.classList.remove('show');
+                    }
                 });
-
-                document.querySelectorAll('.about_project').forEach(p => p.classList.remove('show'));
                 updateAboutState();
             }
         });
@@ -493,7 +496,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn && desc) {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                scrollToProject(projectId);
+                const isOpening = !desc.classList.contains('show');
+                if (isOpening) {
+                    scrollToProject(projectId);
+                }
                 desc.classList.toggle('show');
                 updateAboutState();
             });
