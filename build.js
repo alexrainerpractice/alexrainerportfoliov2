@@ -25,34 +25,17 @@ async function fetchArena(endpoint) {
 async function build() {
     try {
         console.log('Starting Are.na Build Process...');
-
-
         let template = fs.readFileSync('template.html', 'utf-8');
-
 
         const aboutData = await fetchArena(`channels/${ABOUT_CHANNEL}/contents?per=100`);
         const aboutTextItem = aboutData.data.find(item => item.type === 'Text');
         const aboutHTML = aboutTextItem && aboutTextItem.content ? (aboutTextItem.content.html || aboutTextItem.content.plain || '') : 'About me text not found.';
-
         template = template.replace('{{ABOUT_ME}}', aboutHTML);
 
-
-        try {
-            const photoData = await fetchArena(`channels/${PHOTO_CHANNEL}/contents?per=100`);
-            const photosHTML = photoData.data
-                .filter(item => item.type === 'Image')
-                .map((item, index) => {
-                    const imgUrl = item.image.large ? item.image.large.src : item.image.src;
-                    return `                <div class="photo-item"><img src="${imgUrl}" loading="lazy"><span>${index + 1}</span></div>`;
-                })
-                .join('\n');
-
-            template = template.replace('{{PHOTOGRAPHY_GALLERY}}', photosHTML);
-        } catch (err) {
-            console.log(`Skipping Photography (channel might not exist yet): ${err.message}`);
-            template = template.replace('{{PHOTOGRAPHY_GALLERY}}', '<!-- Photography channel pending -->');
-        }
-
+        // --- EDITORIAL SECTION (Fetch first to build image map) ---
+        let projectLinksHTML = '';
+        let carouselsHTML = '';
+        const imageToProjectMap = {}; // Map image IDs to project info
 
         try {
             const editorialMaster = await fetchArena(`channels/${EDITORIAL_CHANNEL}/contents?per=100`);
@@ -63,27 +46,21 @@ async function build() {
                 return isChannel && isNotDraft;
             });
 
-            let projectLinksHTML = '';
-            let carouselsHTML = '';
-
             for (let i = 0; i < projectChannels.length; i++) {
                 const project = projectChannels[i];
                 const projId = project.slug;
                 const isFirst = i === 0;
 
-
                 const projData = await fetchArena(`channels/${projId}/contents?per=100`);
-
-
                 const descItem = projData.data.find(item => item.type === 'Text');
                 const description = descItem && descItem.content ? (descItem.content.html || descItem.content.plain || '') : '';
-
-
                 const displayTitle = (descItem && descItem.title) ? descItem.title : project.title.replace(/^PORTFOLIO \/ /i, '');
-
-
                 const images = projData.data.filter(item => item.type === 'Image');
 
+                // Map these images to this project
+                images.forEach(img => {
+                    imageToProjectMap[img.id] = { id: projId, title: displayTitle };
+                });
 
                 projectLinksHTML += `
                         <li ${isFirst ? 'class="active"' : ''} data-project="${projId}">
@@ -94,7 +71,6 @@ async function build() {
                             <span class="about_button">?</span>
                             <span class="about_project">${description}</span>
                         </li>`;
-
 
                 let carouselImagesHTML = images.map((img, imgIndex) => {
                     const imgUrl = img.image.large ? img.image.large.src : img.image.src;
@@ -113,15 +89,42 @@ ${carouselImagesHTML}
             template = template.replace('{{EDITORIAL_PROJECT_LINKS}}', projectLinksHTML);
             template = template.replace('{{EDITORIAL_PROJECT_CAROUSELS}}', carouselsHTML);
         } catch (err) {
-            console.log(`Skipping Editorial (channel might not exist yet): ${err.message}`);
+            console.log(`Skipping Editorial: ${err.message}`);
             template = template.replace('{{EDITORIAL_PROJECT_LINKS}}', '<!-- Editorial links pending -->');
             template = template.replace('{{EDITORIAL_PROJECT_CAROUSELS}}', '<!-- Editorial carousels pending -->');
         }
+
+        // --- PHOTOGRAPHY SECTION (Use image map for linking) ---
+        try {
+            const photoData = await fetchArena(`channels/${PHOTO_CHANNEL}/contents?per=100`);
+            const photosHTML = photoData.data
+                .filter(item => item.type === 'Image')
+                .map((item, index) => {
+                    const imgUrl = item.image.large ? item.image.large.src : item.image.src;
+                    const projectInfo = imageToProjectMap[item.id];
+                    // Ensure description is a string and handle nulls
+                    const rawDesc = item.description || '';
+                    const description = typeof rawDesc === 'string' ? rawDesc : (rawDesc.plain || '');
+                    
+                    const dataAttrs = projectInfo 
+                        ? `data-project-id="${projectInfo.id}" data-project-title="${projectInfo.title}"` 
+                        : '';
+                    
+                    return `                <div class="photo-item" ${dataAttrs} data-description="${description.replace(/"/g, '&quot;')}"><img src="${imgUrl}" loading="lazy"><span>${index + 1}</span></div>`;
+                })
+                .join('\n');
+
+            template = template.replace('{{PHOTOGRAPHY_GALLERY}}', photosHTML);
+        } catch (err) {
+            console.log(`Skipping Photography: ${err.message}`);
+            template = template.replace('{{PHOTOGRAPHY_GALLERY}}', '<!-- Photography channel pending -->');
+        }
+
         const now = new Date();
         const buildYear = now.getFullYear();
         const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const buildMonth = monthNames[now.getMonth()];
-        
+
         template = template.replace(/\{\{BUILD_YEAR\}\}/g, buildYear);
         template = template.replace('{{BUILD_MONTH}}', buildMonth);
 
