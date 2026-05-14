@@ -404,13 +404,26 @@ body.profile-about-open .about_me_wrapper {
 
 .project_nav li:hover .title-wrapper,
 .project_nav li:active .title-wrapper,
-.project_nav li.active .title-wrapper,
-.project_nav li:hover .about_button,
-.project_nav li:active .about_button,
-.project_nav li.active .about_button {
+.project_nav li.active .title-wrapper {
     background: #3c2a21;
     color: white !important;
     -webkit-text-stroke: 0.015rem white !important;
+    opacity: 1 !important;
+}
+
+.project_nav li:hover .about_button,
+.project_nav li:active .about_button,
+.project_nav li.active .about_button {
+    background: #e35913;
+    color: white !important;
+    -webkit-text-stroke: 0.015rem white !important;
+    opacity: 1 !important;
+}
+
+.project_nav li:hover .in_progress_label,
+.project_nav li:active .in_progress_label,
+.project_nav li.active .in_progress_label {
+    opacity: 1 !important;
 }
 
 .project_nav li:hover .title-wrapper *,
@@ -477,6 +490,21 @@ body.profile-about-open .about_me_wrapper {
     width: fit-content;
     padding: 0.25rem;
     text-align: center;
+}
+
+.in_progress_label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.25rem;
+    padding: 0 0.25rem;
+    background: #dfe918 !important;
+    color: black !important;
+    cursor: default;
+    pointer-events: none;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.25s cubic-bezier(.05, .82, .31, .96);
 }
 
 @media (hover: hover) {
