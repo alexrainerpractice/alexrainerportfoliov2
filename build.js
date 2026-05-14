@@ -117,7 +117,7 @@ async function build() {
                 <div id="carousel-${projId}" class="carousel ${isFirst ? 'active' : ''}">
                     <div class="carousel-inner">
 ${carouselImagesHTML}
-                        <div class="carousel-counter"></div>
+                        <div class="carousel-counter"><div class="counter-track"></div></div>
                     </div>
                 </div>`;
             }

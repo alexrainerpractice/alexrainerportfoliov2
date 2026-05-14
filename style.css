@@ -740,7 +740,7 @@ body.profile-about-open .about_me_wrapper {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto auto;
-    width: fit-content;
+    width: 100%;
     justify-items: center;
 }
 
@@ -778,6 +778,16 @@ body.profile-about-open .about_me_wrapper {
     overflow: hidden;
     transition: margin-top 0.25s ease, max-height 0.25s ease;
     pointer-events: none;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.counter-track {
+    display: flex;
+    transition: transform 0.4s cubic-bezier(.05, .82, .31, .96);
+    width: fit-content;
+    min-width: 100%;
 }
 
 .carousel.show-counter .carousel-counter {
@@ -994,24 +1004,22 @@ body.profile-about-open .about_me_wrapper {
 
 .carousel-counter span {
     cursor: pointer;
-    margin: 0 0.15rem;
+    margin: 0 0.25rem;
     opacity: 0.15;
-    transition: padding 0.3s cubic-bezier(.05, .82, .31, .96), opacity 0.2s ease;
-    padding: 0.5rem 0.2rem;
+    transition: opacity 0.2s ease;
+    padding: 0.5rem 0;
     display: inline-block;
-    min-width: 1rem;
+    min-width: 1.5rem;
     text-align: center;
 }
 
 .carousel-counter span.active {
     opacity: 1;
-    padding: 0 0.4rem;
 }
 
 @media (min-width: 769px) {
     .carousel-counter span:hover {
         opacity: 1;
-        padding: 0 0.4rem;
     }
 }
 
