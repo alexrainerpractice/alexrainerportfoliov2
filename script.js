@@ -389,10 +389,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function initCarouselCounter(carousel) {
-        const counter = carousel.querySelector('.carousel-counter');
-        if (!counter) return;
+        const track = carousel.querySelector('.counter-track');
+        if (!track) return;
 
-        counter.innerHTML = '';
+        track.innerHTML = '';
         const images = carousel.querySelectorAll('img');
         const currentIndex = currentIndexes[carousel.id];
 
@@ -404,14 +404,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.stopPropagation();
                 showImage(carousel, i);
             });
-            counter.appendChild(span);
+            track.appendChild(span);
         });
+        
+        // Initial position
+        updateCounterPosition(carousel, currentIndex);
+    }
+
+    function updateCounterPosition(carousel, index) {
+        const counter = carousel.querySelector('.carousel-counter');
+        const track = carousel.querySelector('.counter-track');
+        if (!counter || !track) return;
+
+        const spans = track.querySelectorAll('span');
+        const activeSpan = spans[index];
+        if (!activeSpan) return;
+
+        const containerWidth = counter.offsetWidth;
+        const trackWidth = track.scrollWidth;
+        
+        if (trackWidth <= containerWidth) {
+            track.style.transform = 'translateX(0)';
+            return;
+        }
+
+        const spanOffset = activeSpan.offsetLeft + (activeSpan.offsetWidth / 2);
+        let tx = (containerWidth / 2) - spanOffset;
+
+        // Clamp tx so we don't show empty space at ends
+        const minTx = containerWidth - trackWidth;
+        const maxTx = 0;
+        
+        if (tx > maxTx) tx = maxTx;
+        if (tx < minTx) tx = minTx;
+
+        track.style.transform = `translateX(${tx}px)`;
     }
 
     function showImage(carousel, index) {
         const images = carousel.querySelectorAll('img');
         const counter = carousel.querySelector('.carousel-counter');
-        const spans = counter ? counter.querySelectorAll('span') : [];
+        const track = carousel.querySelector('.counter-track');
+        const spans = track ? track.querySelectorAll('span') : [];
 
         images.forEach(img => img.classList.remove('active'));
         if (spans.length > 0) spans.forEach(span => span.classList.remove('active'));
@@ -419,6 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
         images[index].classList.add('active');
         if (spans[index]) spans[index].classList.add('active');
         currentIndexes[carousel.id] = index;
+        updateCounterPosition(carousel, index);
     }
 
     const SWIPE_STEP = 35;
