@@ -110,7 +110,32 @@ async function build() {
 
                 let carouselImagesHTML = images.map((img, imgIndex) => {
                     const imgUrl = img.image.large ? img.image.large.src : img.image.src;
-                    return `                    <img src="${imgUrl}" ${imgIndex === 0 ? 'class="active"' : ''} onload="this.classList.add('loaded')">`;
+                    
+                    // Handle image credits from description
+                    let creditHTML = '';
+                    const rawDesc = img.description || '';
+                    const description = typeof rawDesc === 'string' ? rawDesc : (rawDesc.plain || '');
+                    
+                    if (description.toLowerCase().includes('picture taken by')) {
+                        const match = description.match(/Picture taken by\s*(?:\[(.*?)\]|:?\s*([^\(\n]+))\s*(?:\((.*?)\))?/i);
+                        if (match) {
+                            const name = (match[1] || match[2]).trim();
+                            const link = match[3] ? match[3].trim() : null;
+                            if (link) {
+                                creditHTML = `<span class="image-credit"><span class="credit-label">Picture taken by</span> <a href="${link}" target="_blank" class="credit-name">${name}</a></span>`;
+                            } else {
+                                creditHTML = `<span class="image-credit"><span class="credit-label">Picture taken by</span> <span class="credit-name">${name}</span></span>`;
+                            }
+                        }
+                    }
+
+                    return `
+                        <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}">
+                            <div class="image-container">
+                                <img src="${imgUrl}" onload="this.classList.add('loaded')">
+                                ${creditHTML}
+                            </div>
+                        </div>`;
                 }).join('\n');
 
                 carouselsHTML += `

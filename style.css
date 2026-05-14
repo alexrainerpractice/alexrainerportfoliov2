@@ -739,26 +739,87 @@ body.profile-about-open .about_me_wrapper {
     position: relative;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
+    grid-template-rows: 85vh auto;
     width: 100%;
     justify-items: center;
 }
 
-.carousel img {
+.carousel-item {
     grid-row: 1;
     grid-column: 1;
-    opacity: 0;
+    display: none;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    /* Align to top */
+}
+
+.carousel-item.active {
+    display: flex;
+}
+
+.image-container {
+    position: relative;
+    width: fit-content;
+    height: 85vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    /* Align to top */
+}
+
+.carousel img {
+    display: block;
     max-height: 85vh;
     width: auto;
     max-width: 80vw;
     user-select: none;
     -webkit-user-drag: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
 }
 
 .photo-item img.loaded,
-.carousel img.active.loaded {
+.carousel-item.active img.loaded {
     opacity: 1;
+}
+
+.image-credit {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    z-index: 10;
+    white-space: nowrap;
+    pointer-events: none;
+    line-height: 1;
+}
+
+.credit-label {
+    opacity: 0.35;
+    color: #000;
+}
+
+.credit-name {
+    opacity: 1;
+    color: #000 !important;
+    text-decoration: none !important;
     pointer-events: auto;
+}
+
+a.credit-name:hover,
+a.credit-name:active,
+a.credit-name:focus {
+    text-decoration: none !important;
+    border-bottom: none !important;
+    outline: none !important;
+}
+
+@media (max-width: 768px) {
+    .image-credit {
+        padding: 0;
+        /* Inherits root font-size for consistency */
+    }
 }
 
 .carousel-counter {
@@ -826,19 +887,57 @@ body.profile-about-open .about_me_wrapper {
 }
 
 /* --- Infinite Random Widths (13-step loop) --- */
-.photo-item:nth-child(13n+1) { --base-w: 12%; }
-.photo-item:nth-child(13n+2) { --base-w: 28%; }
-.photo-item:nth-child(13n+3) { --base-w: 18%; }
-.photo-item:nth-child(13n+4) { --base-w: 10%; }
-.photo-item:nth-child(13n+5) { --base-w: 22%; }
-.photo-item:nth-child(13n+6) { --base-w: 15%; }
-.photo-item:nth-child(13n+7) { --base-w: 32%; }
-.photo-item:nth-child(13n+8) { --base-w: 9%;  }
-.photo-item:nth-child(13n+9) { --base-w: 25%; }
-.photo-item:nth-child(13n+10){ --base-w: 14%; }
-.photo-item:nth-child(13n+11){ --base-w: 20%; }
-.photo-item:nth-child(13n+12){ --base-w: 11%; }
-.photo-item:nth-child(13n+13){ --base-w: 26%; }
+.photo-item:nth-child(13n+1) {
+    --base-w: 12%;
+}
+
+.photo-item:nth-child(13n+2) {
+    --base-w: 28%;
+}
+
+.photo-item:nth-child(13n+3) {
+    --base-w: 18%;
+}
+
+.photo-item:nth-child(13n+4) {
+    --base-w: 10%;
+}
+
+.photo-item:nth-child(13n+5) {
+    --base-w: 22%;
+}
+
+.photo-item:nth-child(13n+6) {
+    --base-w: 15%;
+}
+
+.photo-item:nth-child(13n+7) {
+    --base-w: 32%;
+}
+
+.photo-item:nth-child(13n+8) {
+    --base-w: 9%;
+}
+
+.photo-item:nth-child(13n+9) {
+    --base-w: 25%;
+}
+
+.photo-item:nth-child(13n+10) {
+    --base-w: 14%;
+}
+
+.photo-item:nth-child(13n+11) {
+    --base-w: 20%;
+}
+
+.photo-item:nth-child(13n+12) {
+    --base-w: 11%;
+}
+
+.photo-item:nth-child(13n+13) {
+    --base-w: 26%;
+}
 
 .photo-item {
     display: flex;
@@ -846,16 +945,12 @@ body.profile-about-open .about_me_wrapper {
     align-items: center;
     flex-shrink: 1;
     flex-grow: 1;
-    flex-basis: calc((var(--base-w, 20%) * var(--photo-grid-scale, 1)) * 0.98);
+    flex-basis: calc(var(--base-w, 20%) * var(--photo-grid-scale, 1));
     margin: 0;
     transition: margin 0.4s cubic-bezier(.05, .82, .31, .96);
 }
 
 @media (min-width: 769px) {
-    .photo-item:hover {
-        margin: 0 0.4rem;
-    }
-
     .photography-grid::after {
         content: "";
         flex: 1000 1 0%;
@@ -1169,6 +1264,15 @@ body.profile-about-open .about_me_wrapper {
         transition: max-height 0.5s ease, margin-top 0.5s ease;
         z-index: 10;
         position: relative;
+    }
+
+    .image-credit {
+        opacity: 1;
+    }
+
+    .credit-name {
+        color: #000 !important;
+        text-decoration: none !important;
     }
 
     .carousel.show-counter .carousel-counter {

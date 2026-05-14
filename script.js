@@ -421,10 +421,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!track) return;
 
         track.innerHTML = '';
-        const images = carousel.querySelectorAll('img');
+        const items = carousel.querySelectorAll('.carousel-item');
         const currentIndex = currentIndexes[carousel.id];
 
-        images.forEach((_, i) => {
+        items.forEach((_, i) => {
             const span = document.createElement('span');
             span.textContent = i + 1;
             if (i === currentIndex) span.classList.add('active');
@@ -470,16 +470,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showImage(carousel, index) {
-        const images = carousel.querySelectorAll('img');
-        const counter = carousel.querySelector('.carousel-counter');
+        const items = carousel.querySelectorAll('.carousel-item');
         const track = carousel.querySelector('.counter-track');
         const spans = track ? track.querySelectorAll('span') : [];
 
-        images.forEach(img => img.classList.remove('active'));
+        items.forEach(item => item.classList.remove('active'));
         if (spans.length > 0) spans.forEach(span => span.classList.remove('active'));
 
-        images[index].classList.add('active');
+        if (items[index]) items[index].classList.add('active');
         if (spans[index]) spans[index].classList.add('active');
+        
         currentIndexes[carousel.id] = index;
         updateCounterPosition(carousel, index);
     }
@@ -504,15 +504,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isDragging || !currentDraggingCarousel) return;
 
         const deltaX = x - initialX;
-        const images = currentDraggingCarousel.querySelectorAll('img');
-        if (images.length <= 1) return;
+        const items = currentDraggingCarousel.querySelectorAll('.carousel-item');
+        if (items.length <= 1) return;
 
         const SWIPE_STEP = 60; // Increased for more stable control
         const steps = Math.round(deltaX / SWIPE_STEP);
 
         // Calculate new index based on initial position and drag distance
-        let newIndex = (initialIndex + steps) % images.length;
-        if (newIndex < 0) newIndex = images.length + newIndex;
+        let newIndex = (initialIndex + steps) % items.length;
+        if (newIndex < 0) newIndex = items.length + newIndex;
 
         if (newIndex !== currentIndexes[currentDraggingCarousel.id]) {
             showImage(currentDraggingCarousel, newIndex);
@@ -522,7 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleDragEnd = (endX) => {
         if (isDragging && currentDraggingCarousel) {
             const dx = endX - initialX;
-            const images = currentDraggingCarousel.querySelectorAll('img');
+            const items = currentDraggingCarousel.querySelectorAll('.carousel-item');
             const threshold = 30; // Minimum pixels to trigger a swipe
 
             if (Math.abs(dx) > threshold) {
@@ -531,10 +531,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (dx > 0) {
                     // Swipe right -> Next image
-                    newIndex = (currentIndex + 1) % images.length;
+                    newIndex = (currentIndex + 1) % items.length;
                 } else {
                     // Swipe left -> Previous image
-                    newIndex = (currentIndex - 1 + images.length) % images.length;
+                    newIndex = (currentIndex - 1 + items.length) % items.length;
                 }
                 
                 showImage(currentDraggingCarousel, newIndex);
@@ -694,19 +694,18 @@ document.addEventListener('DOMContentLoaded', () => {
         let targetCarousel = e.target.closest('.carousel');
         if (!targetCarousel) return;
 
-        // Only allow click-to-navigate on desktop (width > 768px)
-        if (window.innerWidth <= 768) return;
+        // Click-to-navigate enabled for all devices (swipes handled by separate drag logic)
 
-        const images = targetCarousel.querySelectorAll('img');
-        if (images.length === 0) return;
+        const items = targetCarousel.querySelectorAll('.carousel-item');
+        if (items.length === 0) return;
 
         const currentIndex = currentIndexes[targetCarousel.id];
         if (e.clientX < window.innerWidth / 2) {
             let newIndex = currentIndex - 1;
-            if (newIndex < 0) newIndex = images.length - 1;
+            if (newIndex < 0) newIndex = items.length - 1;
             showImage(targetCarousel, newIndex);
         } else {
-            let newIndex = (currentIndex + 1) % images.length;
+            let newIndex = (currentIndex + 1) % items.length;
             showImage(targetCarousel, newIndex);
         }
     });
@@ -715,17 +714,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
         if (!activeCarousel) return;
         
-        const images = activeCarousel.querySelectorAll('img');
-        if (images.length === 0) return;
+        const items = activeCarousel.querySelectorAll('.carousel-item');
+        if (items.length === 0) return;
         
         const currentIndex = currentIndexes[activeCarousel.id] || 0;
         
         if (e.key === 'ArrowLeft') {
             let newIndex = currentIndex - 1;
-            if (newIndex < 0) newIndex = images.length - 1;
+            if (newIndex < 0) newIndex = items.length - 1;
             showImage(activeCarousel, newIndex);
         } else if (e.key === 'ArrowRight') {
-            let newIndex = (currentIndex + 1) % images.length;
+            let newIndex = (currentIndex + 1) % items.length;
             showImage(activeCarousel, newIndex);
         }
     });
