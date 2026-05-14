@@ -6,6 +6,7 @@ const ARENA_PAT = process.env.ARENA_PAT;
 const ABOUT_CHANNEL = 'portfolio-about-me';
 const PHOTO_CHANNEL = 'portfolio-photography-gallery';
 const EDITORIAL_CHANNEL = 'portfolio-editorial-phzbw5s5xrm';
+const IN_PROGRESS_CHANNEL = 'portfolio-editorial-in-progress';
 
 const headers = {
     'Authorization': `Bearer ${ARENA_PAT}`,
@@ -32,6 +33,16 @@ async function build() {
         const aboutHTML = aboutTextItem && aboutTextItem.content ? (aboutTextItem.content.html || aboutTextItem.content.plain || '') : 'About me text not found.';
         template = template.replace('{{ABOUT_ME}}', aboutHTML);
 
+        // --- FETCH IN-PROGRESS TAGS ---
+        let inProgressSlugs = new Set();
+        try {
+            const inProgressData = await fetchArena(`channels/${IN_PROGRESS_CHANNEL}/contents?per=100`);
+            inProgressSlugs = new Set(inProgressData.data.map(item => item.slug));
+            console.log(`Found ${inProgressSlugs.size} in-progress projects.`);
+        } catch (err) {
+            console.log(`Warning: Could not fetch In Progress channel: ${err.message}`);
+        }
+
         // --- EDITORIAL SECTION (Fetch first to build image map) ---
         let projectLinksHTML = '';
         let carouselsHTML = '';
@@ -50,6 +61,7 @@ async function build() {
                 const project = projectChannels[i];
                 const projId = project.slug;
                 const isFirst = i === 0;
+                const isInProgress = inProgressSlugs.has(projId);
 
                 const projData = await fetchArena(`channels/${projId}/contents?per=100`);
                 const descItem = projData.data.find(item => item.type === 'Text');
@@ -62,14 +74,18 @@ async function build() {
                     imageToProjectMap[img.id] = { id: projId, title: displayTitle };
                 });
 
+                const labelHTML = isInProgress 
+                    ? '<span class="in_progress_label">In Progress</span>' 
+                    : '<span class="about_button">?</span>';
+
                 projectLinksHTML += `
                         <li ${isFirst ? 'class="active"' : ''} data-project="${projId}">
                             <span class="title-wrapper">
                                 <span class="project_number">${i + 1}</span>
                                 <span class="project_title">${displayTitle}</span>
                             </span>
-                            <span class="about_button">?</span>
-                            <span class="about_project">${description}</span>
+                            ${labelHTML}
+                            <span class="about_project">${isInProgress ? '' : description}</span>
                         </li>`;
 
                 let carouselImagesHTML = images.map((img, imgIndex) => {
