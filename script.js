@@ -511,8 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const steps = Math.round(deltaX / SWIPE_STEP);
 
         // Calculate new index based on initial position and drag distance
-        // Swipe left (negative deltaX) should increase index
-        let newIndex = (initialIndex - steps) % images.length;
+        let newIndex = (initialIndex + steps) % images.length;
         if (newIndex < 0) newIndex = images.length + newIndex;
 
         if (newIndex !== currentIndexes[currentDraggingCarousel.id]) {
@@ -522,7 +521,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleDragEnd = (endX) => {
         if (isDragging && currentDraggingCarousel) {
-            lastDragTime = Date.now();
+            const dx = endX - initialX;
+            const images = currentDraggingCarousel.querySelectorAll('img');
+            const threshold = 30; // Minimum pixels to trigger a swipe
+
+            if (Math.abs(dx) > threshold) {
+                const currentIndex = currentIndexes[currentDraggingCarousel.id];
+                let newIndex = currentIndex;
+                
+                if (dx > 0) {
+                    // Swipe right -> Next image
+                    newIndex = (currentIndex + 1) % images.length;
+                } else {
+                    // Swipe left -> Previous image
+                    newIndex = (currentIndex - 1 + images.length) % images.length;
+                }
+                
+                showImage(currentDraggingCarousel, newIndex);
+                lastDragTime = Date.now();
+            }
         }
         isDragging = false;
         currentDraggingCarousel = null;
@@ -537,8 +554,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const carousel = entry.target;
             carousel.dataset.ratio = entry.intersectionRatio;
             
-            // On mobile, only show counter if carousel is at least 50% visible
-            const showThreshold = window.innerWidth <= 768 ? 0.5 : 0.01;
+            // Only show counter if carousel is at least 50% visible (prevents jumping on scroll)
+            const showThreshold = 0.5;
             carousel.classList.toggle('show-counter', entry.intersectionRatio >= showThreshold);
         });
 
@@ -677,6 +694,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let targetCarousel = e.target.closest('.carousel');
         if (!targetCarousel) return;
 
+        // Only allow click-to-navigate on desktop (width > 768px)
+        if (window.innerWidth <= 768) return;
+
         const images = targetCarousel.querySelectorAll('img');
         if (images.length === 0) return;
 
@@ -688,6 +708,25 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             let newIndex = (currentIndex + 1) % images.length;
             showImage(targetCarousel, newIndex);
+        }
+    });
+
+    // Keyboard navigation for carousels
+    document.addEventListener('keydown', (e) => {
+        if (!activeCarousel) return;
+        
+        const images = activeCarousel.querySelectorAll('img');
+        if (images.length === 0) return;
+        
+        const currentIndex = currentIndexes[activeCarousel.id] || 0;
+        
+        if (e.key === 'ArrowLeft') {
+            let newIndex = currentIndex - 1;
+            if (newIndex < 0) newIndex = images.length - 1;
+            showImage(activeCarousel, newIndex);
+        } else if (e.key === 'ArrowRight') {
+            let newIndex = (currentIndex + 1) % images.length;
+            showImage(activeCarousel, newIndex);
         }
     });
 

@@ -751,7 +751,6 @@ body.profile-about-open .about_me_wrapper {
     max-height: 85vh;
     width: auto;
     max-width: 80vw;
-    pointer-events: none;
     user-select: none;
     -webkit-user-drag: none;
 }
