@@ -755,9 +755,6 @@ body.profile-about-open .about_me_wrapper {
     -webkit-user-drag: none;
 }
 
-.photo-item img {
-}
-
 .photo-item img.loaded,
 .carousel img.active.loaded {
     opacity: 1;
