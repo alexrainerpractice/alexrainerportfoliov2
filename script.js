@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             currentIndex = index;
             const targetImg = allPhotos[currentIndex];
-            fullImg.src = targetImg.src;
+            fullImg.src = targetImg.getAttribute('data-large') || targetImg.src;
 
             // Detect orientation for adaptive zoom
             const isHorizontal = targetImg.naturalWidth > targetImg.naturalHeight;
@@ -476,68 +476,118 @@ document.addEventListener('DOMContentLoaded', () => {
         currentDraggingCarousel = null;
     };
 
-    const observerOptions = {
-        threshold: [0, 0.7]
-    };
+
+    let isClickScrolling = false;
 
     const observer = new IntersectionObserver((entries) => {
-        // Sort entries by ratio so the most visible one wins if multiple fire at once
-        const sortedEntries = [...entries].sort((a, b) => a.intersectionRatio - b.intersectionRatio);
-
-        sortedEntries.forEach(entry => {
+        // Track intersection ratios for all observed carousels
+        entries.forEach(entry => {
             const carousel = entry.target;
+            carousel.dataset.ratio = entry.intersectionRatio;
+            
+            // On mobile, only show counter if carousel is at least 50% visible
+            const showThreshold = window.innerWidth <= 768 ? 0.5 : 0.01;
+            carousel.classList.toggle('show-counter', entry.intersectionRatio >= showThreshold);
+        });
 
-            // Toggle counter visibility based on any intersection
-            carousel.classList.toggle('show-counter', entry.isIntersecting);
+        if (isClickScrolling) return;
 
-            // Only switch active project highlight if highly visible (0.7 threshold)
-            if (entry.isIntersecting && entry.intersectionRatio >= 0.7) {
-                activeCarousel = carousel;
-                const projectId = carousel.id.replace('carousel-', '');
+        let bestCarousel = activeCarousel;
+        let maxRatio = -1;
 
-                projectLinks.forEach(link => {
-                    const isActive = link.getAttribute('data-project') === projectId;
-                    link.classList.toggle('active', isActive);
-                    if (!isActive) {
-                        const desc = link.querySelector('.about_project');
-                        if (desc) desc.classList.remove('show');
-                    }
-                });
-                updateAboutState();
+        carousels.forEach((carousel, index) => {
+            const ratio = parseFloat(carousel.dataset.ratio || '0');
+            
+            // At the very top, favor the first item
+            if (index === 0 && window.scrollY < 20 && ratio > 0.01) {
+                bestCarousel = carousel;
+                maxRatio = 2; 
+                return;
+            }
+
+            if (ratio > maxRatio) {
+                maxRatio = ratio;
+                bestCarousel = carousel;
             }
         });
-    }, observerOptions);
+
+        if (bestCarousel && (maxRatio >= 0.4 || maxRatio === 2)) {
+            activateProject(bestCarousel);
+        }
+    }, { threshold: [0, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0] });
+
+    function activateProject(carousel) {
+        if (!carousel) return;
+        const projectId = carousel.id.replace('carousel-', '');
+        
+        // Update selection
+        projectLinks.forEach(link => {
+            const isActive = link.getAttribute('data-project') === projectId;
+            link.classList.toggle('active', isActive);
+            if (!isActive) {
+                const desc = link.querySelector('.about_project');
+                if (desc) desc.classList.remove('show');
+            }
+        });
+        
+        activeCarousel = carousel;
+        updateAboutState();
+    }
 
     carousels.forEach(c => observer.observe(c));
 
     function scrollToProject(projectId) {
         const targetCarousel = document.getElementById(`carousel-${projectId}`);
         if (targetCarousel) {
-            targetCarousel.scrollIntoView({ behavior: 'smooth' });
+            isClickScrolling = true;
+            
+            // Highlight immediately
+            activateProject(targetCarousel);
+
+            // Calculate position and scroll
+            const yOffset = targetCarousel.getBoundingClientRect().top + window.pageYOffset;
+            window.scrollTo({
+                top: yOffset,
+                behavior: 'smooth'
+            });
+            
+            // Release lock after scroll completes
+            setTimeout(() => {
+                isClickScrolling = false;
+            }, 1000);
         }
     }
 
-    projectLinks.forEach(link => {
-        const projectId = link.getAttribute('data-project');
+    // Click handling for project list
+    const projectNav = document.querySelector('.project_nav');
+    if (projectNav) {
+        projectNav.addEventListener('click', (e) => {
+            const li = e.target.closest('li');
+            if (!li) return;
 
-        link.addEventListener('click', () => {
+            const projectId = li.getAttribute('data-project');
+            if (!projectId) return;
+
+            // If clicking the about button, toggle description
+            const aboutBtn = e.target.closest('.about_button');
+            if (aboutBtn) {
+                const desc = li.querySelector('.about_project');
+                if (desc) {
+                    e.stopPropagation();
+                    const isOpening = !desc.classList.contains('show');
+                    if (isOpening) {
+                        scrollToProject(projectId);
+                    }
+                    desc.classList.toggle('show');
+                    updateAboutState();
+                }
+                return;
+            }
+
+            // Otherwise, just scroll to project
             scrollToProject(projectId);
         });
-
-        const btn = link.querySelector('.about_button');
-        const desc = link.querySelector('.about_project');
-        if (btn && desc) {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const isOpening = !desc.classList.contains('show');
-                if (isOpening) {
-                    scrollToProject(projectId);
-                }
-                desc.classList.toggle('show');
-                updateAboutState();
-            });
-        }
-    });
+    }
 
     document.addEventListener('click', (e) => {
 

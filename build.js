@@ -23,21 +23,41 @@ async function fetchArena(endpoint) {
     return res.json();
 }
 
+async function fetchAllArenaContents(channelSlug) {
+    let allContents = [];
+    let page = 1;
+    let per = 100;
+    let hasMore = true;
+
+    while (hasMore) {
+        const data = await fetchArena(`channels/${channelSlug}/contents?per=${per}&page=${page}`);
+        const contents = data.contents || data.data || [];
+        allContents = allContents.concat(contents);
+        
+        if (contents.length < per) {
+            hasMore = false;
+        } else {
+            page++;
+        }
+    }
+    return allContents;
+}
+
 async function build() {
     try {
         console.log('Starting Are.na Build Process...');
         let template = fs.readFileSync('template.html', 'utf-8');
 
-        const aboutData = await fetchArena(`channels/${ABOUT_CHANNEL}/contents?per=100`);
-        const aboutTextItem = aboutData.data.find(item => item.type === 'Text');
+        const aboutContents = await fetchAllArenaContents(ABOUT_CHANNEL);
+        const aboutTextItem = aboutContents.find(item => item.type === 'Text');
         const aboutHTML = aboutTextItem && aboutTextItem.content ? (aboutTextItem.content.html || aboutTextItem.content.plain || '') : 'About me text not found.';
         template = template.replace('{{ABOUT_ME}}', aboutHTML);
 
         // --- FETCH IN-PROGRESS TAGS ---
         let inProgressSlugs = new Set();
         try {
-            const inProgressData = await fetchArena(`channels/${IN_PROGRESS_CHANNEL}/contents?per=100`);
-            inProgressSlugs = new Set(inProgressData.data.map(item => item.slug));
+            const inProgressContents = await fetchAllArenaContents(IN_PROGRESS_CHANNEL);
+            inProgressSlugs = new Set(inProgressContents.map(item => item.slug));
             console.log(`Found ${inProgressSlugs.size} in-progress projects.`);
         } catch (err) {
             console.log(`Warning: Could not fetch In Progress channel: ${err.message}`);
@@ -49,8 +69,8 @@ async function build() {
         const imageToProjectMap = {}; // Map image IDs to project info
 
         try {
-            const editorialMaster = await fetchArena(`channels/${EDITORIAL_CHANNEL}/contents?per=100`);
-            const projectChannels = editorialMaster.data.filter(item => {
+            const editorialContents = await fetchAllArenaContents(EDITORIAL_CHANNEL);
+            const projectChannels = editorialContents.filter(item => {
                 const isChannel = item.type === 'Channel';
                 const description = item.description ? (item.description.plain || item.description.markdown || '') : '';
                 const isNotDraft = !description.toLowerCase().includes('[draft]');
@@ -63,11 +83,11 @@ async function build() {
                 const isFirst = i === 0;
                 const isInProgress = inProgressSlugs.has(projId);
 
-                const projData = await fetchArena(`channels/${projId}/contents?per=100`);
-                const descItem = projData.data.find(item => item.type === 'Text');
+                const projContents = await fetchAllArenaContents(projId);
+                const descItem = projContents.find(item => item.type === 'Text');
                 const description = descItem && descItem.content ? (descItem.content.html || descItem.content.plain || '') : '';
                 const displayTitle = (descItem && descItem.title) ? descItem.title : project.title.replace(/^PORTFOLIO \/ /i, '');
-                const images = projData.data.filter(item => item.type === 'Image');
+                const images = projContents.filter(item => item.type === 'Image');
 
                 // Map these images to this project
                 images.forEach(img => {
@@ -90,7 +110,7 @@ async function build() {
 
                 let carouselImagesHTML = images.map((img, imgIndex) => {
                     const imgUrl = img.image.large ? img.image.large.src : img.image.src;
-                    return `                    <img src="${imgUrl}" ${imgIndex === 0 ? 'class="active"' : ''}>`;
+                    return `                    <img src="${imgUrl}" ${imgIndex === 0 ? 'class="active"' : ''} onload="this.classList.add('loaded')">`;
                 }).join('\n');
 
                 carouselsHTML += `
@@ -112,11 +132,12 @@ ${carouselImagesHTML}
 
         // --- PHOTOGRAPHY SECTION (Use image map for linking) ---
         try {
-            const photoData = await fetchArena(`channels/${PHOTO_CHANNEL}/contents?per=100`);
-            const photosHTML = photoData.data
+            const photoContents = await fetchAllArenaContents(PHOTO_CHANNEL);
+            const photosHTML = photoContents
                 .filter(item => item.type === 'Image')
                 .map((item, index) => {
-                    const imgUrl = item.image.large ? item.image.large.src : item.image.src;
+                    const thumbUrl = item.image.medium ? item.image.medium.src : item.image.src;
+                    const largeUrl = item.image.large ? item.image.large.src : (item.image.medium ? item.image.medium.src : item.image.src);
                     const projectInfo = imageToProjectMap[item.id];
                     // Ensure description is a string and handle nulls
                     const rawDesc = item.description || '';
@@ -126,7 +147,7 @@ ${carouselImagesHTML}
                         ? `data-project-id="${projectInfo.id}" data-project-title="${projectInfo.title}"` 
                         : '';
                     
-                    return `                <div class="photo-item" ${dataAttrs} data-description="${description.replace(/"/g, '&quot;')}"><img src="${imgUrl}" loading="lazy"><span>${index + 1}</span></div>`;
+                    return `                <div class="photo-item" ${dataAttrs} data-description="${description.replace(/"/g, '&quot;')}"><img src="${thumbUrl}" data-large="${largeUrl}" loading="lazy" onload="this.classList.add('loaded')"><span>${index + 1}</span></div>`;
                 })
                 .join('\n');
 
