@@ -750,23 +750,26 @@ body.profile-about-open .about_me_wrapper {
     display: none;
     width: 100%;
     height: 100%;
-    justify-content: center;
-    align-items: flex-start;
-    /* Align to top */
+    justify-content: flex-start;
+    /* Stuck to the top */
+    align-items: center;
+    /* Horizontally centered */
+    flex-direction: column;
+    position: relative;
 }
 
 .carousel-item.active {
-    display: flex;
+    display: flex !important;
 }
 
 .image-container {
     position: relative;
     width: fit-content;
-    height: 85vh;
+    height: auto;
+    /* Wraps the image height */
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    /* Align to top */
 }
 
 .carousel img {
@@ -776,23 +779,27 @@ body.profile-about-open .about_me_wrapper {
     max-width: 80vw;
     user-select: none;
     -webkit-user-drag: none;
-    opacity: 0;
-    transition: opacity 0.4s ease;
+    opacity: 1;
+    /* Ensure visibility by default */
 }
 
 .photo-item img.loaded,
-.carousel-item.active img.loaded {
+.carousel img.loaded {
     opacity: 1;
 }
 
 .image-credit {
     position: absolute;
-    bottom: 0.5rem;
-    left: 0.5rem;
+    bottom: 0.25rem;
+    left: 0.25rem;
+    right: auto;
     z-index: 10;
     white-space: nowrap;
     pointer-events: none;
     line-height: 1;
+    color: #000 !important;
+    -webkit-text-stroke: 0.015rem black !important;
+    opacity: 1;
 }
 
 .credit-label {
@@ -801,8 +808,8 @@ body.profile-about-open .about_me_wrapper {
 }
 
 .credit-name {
-    opacity: 1;
     color: #000 !important;
+    -webkit-text-stroke: 0.015rem black !important;
     text-decoration: none !important;
     pointer-events: auto;
 }
@@ -816,9 +823,25 @@ a.credit-name:focus {
 }
 
 @media (max-width: 768px) {
+    .image-container {
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+
     .image-credit {
-        padding: 0;
-        /* Inherits root font-size for consistency */
+        position: relative;
+        bottom: auto;
+        left: auto;
+        right: auto;
+        margin-top: 0.25rem;
+        margin-left: 0.25rem;
+        padding-left: 0;
+        opacity: 1;
+        color: #000 !important;
+        -webkit-text-stroke: 0.015rem black !important;
     }
 }
 
@@ -833,22 +856,20 @@ a.credit-name:focus {
     pointer-events: none;
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .counter-track {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     transition: transform 0.4s cubic-bezier(.05, .82, .31, .96);
     width: fit-content;
     min-width: 100%;
+    padding: 0 50%;
 }
 
 @media (max-width: 768px) {
-    .counter-track {
-        justify-content: flex-start;
-        padding-left: 0;
-    }
+    /* (Unified padding handled above) */
 }
 
 .carousel.show-counter .carousel-counter {
@@ -1004,6 +1025,10 @@ a.credit-name:focus {
     transform: scale(2.2);
 }
 
+.fullscreen-counter {
+    display: none;
+}
+
 .current-num {
     position: absolute;
     top: 0.25rem;
@@ -1036,10 +1061,9 @@ a.credit-name:focus {
     cursor: pointer;
     margin: 0 0.25rem;
     opacity: 0.15;
-    transition: opacity 0.2s ease;
-    padding: 0.5rem 0;
+    padding: 0.25rem 0;
     display: inline-block;
-    min-width: 1.5rem;
+    min-width: 1rem;
     text-align: center;
 }
 
@@ -1228,7 +1252,8 @@ a.credit-name:focus {
 
     .carousel-inner {
         display: grid;
-        grid-template-rows: auto auto;
+        grid-template-rows: 85vh auto;
+        /* Fixed carousel height */
         justify-items: center;
         align-content: center;
         width: 100%;
@@ -1237,16 +1262,14 @@ a.credit-name:focus {
     }
 
     .carousel img {
-        grid-row: 1;
-        grid-column: 1;
         width: auto;
         max-width: 100%;
         object-fit: contain;
         display: block;
-        opacity: 0;
+        opacity: 1;
     }
 
-    .carousel img.active {
+    .carousel img.loaded {
         opacity: 1;
     }
 
@@ -1254,7 +1277,7 @@ a.credit-name:focus {
         grid-row: 2;
         grid-column: 1;
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         padding: 0;
         margin-top: 0;
@@ -1325,6 +1348,57 @@ a.credit-name:focus {
     .current-num {
         top: 0.25rem;
         bottom: auto;
+    }
+
+    .fullscreen-close {
+        bottom: 0.25rem;
+    }
+
+    /* Fullscreen Thumbnail Counter Track */
+    .fullscreen-counter {
+        display: flex;
+        position: absolute;
+        bottom: 2rem;
+        left: 0;
+        width: 100%;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        overflow: hidden;
+        z-index: 15;
+        opacity: 1;
+        max-height: 3rem;
+        pointer-events: auto;
+    }
+
+    .fullscreen-counter .counter-track {
+        display: flex;
+        gap: .25rem;
+        padding: 0 50%;
+    }
+
+    .thumb-nav {
+        height: 1.25rem;
+        width: auto;
+        min-width: 1rem;
+        flex-shrink: 0;
+        opacity: 0.125;
+        cursor: pointer;
+        object-fit: cover;
+    }
+
+    .thumb-nav.active {
+        opacity: 1;
+    }
+
+    /* Adjust other elements when counter is present */
+    .fullscreen-overlay .project-link-overlay {
+        bottom: 5.5rem;
+    }
+
+    .fullscreen-overlay .current-num {
+        top: 0.25rem;
     }
 
     .fullscreen-close {

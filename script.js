@@ -122,6 +122,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentBtn = document.createElement('span');
         currentBtn.className = 'current-num';
 
+        function getCurrentTx(el) {
+            const style = window.getComputedStyle(el);
+            const matrix = new WebKitCSSMatrix(style.transform);
+            return matrix.m41;
+        }
+
+        const carouselCounter = document.createElement('div');
+        carouselCounter.className = 'carousel-counter fullscreen-counter';
+        const counterTrack = document.createElement('div');
+        counterTrack.className = 'counter-track';
+        carouselCounter.appendChild(counterTrack);
+
+        // Fill counter track with thumbnails
+        allPhotos.forEach((photo, i) => {
+            const thumb = document.createElement('img');
+            thumb.src = photo.src;
+            thumb.className = 'thumb-nav';
+            if (i === currentIndex) thumb.classList.add('active');
+            thumb.addEventListener('click', (e) => {
+                e.stopPropagation();
+                updateFullscreenView(i);
+            });
+            counterTrack.appendChild(thumb);
+        });
+
         const projectLink = document.createElement('div');
         projectLink.className = 'project-link-overlay';
         projectLink.style.display = 'none';
@@ -134,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.appendChild(fullImg);
         overlay.appendChild(rightGutter);
         overlay.appendChild(currentBtn);
+        overlay.appendChild(carouselCounter);
         overlay.appendChild(projectLink);
         overlay.appendChild(photoDesc);
 
@@ -207,9 +233,14 @@ document.addEventListener('DOMContentLoaded', () => {
             fullImg.classList.toggle('is-horizontal', isHorizontal);
             fullImg.classList.toggle('is-vertical', !isHorizontal);
 
-            fullImg.classList.remove('zoomed');
-            overlay.classList.remove('is-zoomed');
-            if (rafId) cancelAnimationFrame(rafId);
+            const wasZoomed = fullImg.classList.contains('zoomed');
+            if (!wasZoomed) {
+                fullImg.classList.remove('zoomed');
+                overlay.classList.remove('is-zoomed');
+                if (rafId) cancelAnimationFrame(rafId);
+            } else {
+                targetX = 50; targetY = 50;
+            }
 
             currentBtn.textContent = currentIndex + 1;
 
@@ -254,7 +285,100 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 photoDesc.style.display = 'none';
             }
+
+            // Update thumbnails
+            const thumbs = counterTrack.querySelectorAll('.thumb-nav');
+            thumbs.forEach((t, i) => {
+                t.classList.toggle('active', i === currentIndex);
+            });
+            updateFullscreenCounterPosition(currentIndex);
         }
+
+        function updateFullscreenCounterPosition(index) {
+            const thumbs = counterTrack.querySelectorAll('.thumb-nav');
+            const activeThumb = thumbs[index];
+            if (!activeThumb) return;
+
+            const containerWidth = carouselCounter.offsetWidth;
+            const thumbOffset = activeThumb.offsetLeft + (activeThumb.offsetWidth / 2);
+            let tx = (containerWidth / 2) - thumbOffset;
+
+            counterTrack.style.transform = `translateX(${tx}px)`;
+        }
+
+        function getFullscreenBounds() {
+            const thumbs = counterTrack.querySelectorAll('.thumb-nav');
+            if (thumbs.length === 0) return { min: 0, max: 0 };
+            const containerWidth = carouselCounter.offsetWidth;
+            
+            const firstThumb = thumbs[0];
+            const lastThumb = thumbs[thumbs.length - 1];
+            
+            const maxTx = (containerWidth / 2) - (firstThumb.offsetLeft + firstThumb.offsetWidth / 2);
+            const minTx = (containerWidth / 2) - (lastThumb.offsetLeft + lastThumb.offsetWidth / 2);
+            
+            return { min: minTx, max: maxTx };
+        }
+
+        // Add smooth scrubbing to fullscreen counter
+        let isCounterDragging = false;
+        let counterStartX = 0;
+        let counterInitialTx = 0;
+
+        carouselCounter.addEventListener('touchstart', (e) => {
+            isCounterDragging = true;
+            counterStartX = e.touches[0].clientX;
+            counterInitialTx = getCurrentTx(counterTrack);
+            counterTrack.style.transition = 'none'; // Disable transition while dragging
+        }, { passive: true });
+
+        carouselCounter.addEventListener('touchmove', (e) => {
+            if (!isCounterDragging) return;
+            const x = e.touches[0].clientX;
+            const deltaX = x - counterStartX;
+            let currentTx = counterInitialTx + deltaX;
+
+            // Clamp tx to bounds
+            const bounds = getFullscreenBounds();
+            if (currentTx > bounds.max) currentTx = bounds.max;
+            if (currentTx < bounds.min) currentTx = bounds.min;
+
+            counterTrack.style.transform = `translateX(${currentTx}px)`;
+
+            // Find closest thumb to center
+            const containerCenter = carouselCounter.offsetWidth / 2;
+            const thumbs = Array.from(counterTrack.querySelectorAll('.thumb-nav'));
+            
+            let closestIndex = currentIndex;
+            let minDistance = Infinity;
+
+            thumbs.forEach((thumb, i) => {
+                const thumbCenter = thumb.offsetLeft + (thumb.offsetWidth / 2) + currentTx;
+                const distance = Math.abs(containerCenter - thumbCenter);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestIndex = i;
+                }
+            });
+
+            if (closestIndex !== currentIndex) {
+                // Debounce/optimize updateFullscreenView during scrubbing
+                currentIndex = closestIndex;
+                const targetImg = allPhotos[currentIndex];
+                fullImg.src = targetImg.src; // Instant low-res update
+                currentBtn.textContent = currentIndex + 1;
+                
+                // Update active thumb state immediately
+                const thumbs = counterTrack.querySelectorAll('.thumb-nav');
+                thumbs.forEach((t, i) => t.classList.toggle('active', i === currentIndex));
+            }
+        }, { passive: false });
+
+        carouselCounter.addEventListener('touchend', () => {
+            isCounterDragging = false;
+            counterTrack.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)'; 
+            updateFullscreenView(currentIndex); // Final high-res update and centering
+        });
 
         updateFullscreenView(currentIndex);
 
@@ -330,8 +454,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const steps = Math.round(deltaX / SWIPE_STEP);
 
             if (steps !== 0) {
-                let newIndex = (overlayInitialIndex + steps) % allPhotos.length;
-                if (newIndex < 0) newIndex = allPhotos.length + newIndex;
+                // Not looping
+                let newIndex = overlayInitialIndex - steps;
+                if (newIndex < 0) newIndex = 0;
+                if (newIndex >= allPhotos.length) newIndex = allPhotos.length - 1;
 
                 if (newIndex !== currentIndex) {
                     updateFullscreenView(newIndex);
@@ -449,31 +575,39 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!activeSpan) return;
 
         const containerWidth = counter.offsetWidth;
-        const trackWidth = track.scrollWidth;
-        
-        if (trackWidth <= containerWidth) {
-            track.style.transform = 'translateX(0)';
-            return;
-        }
-
         const spanOffset = activeSpan.offsetLeft + (activeSpan.offsetWidth / 2);
         let tx = (containerWidth / 2) - spanOffset;
-
-        // Clamp tx so we don't show empty space at ends
-        const minTx = containerWidth - trackWidth;
-        const maxTx = 0;
-        
-        if (tx > maxTx) tx = maxTx;
-        if (tx < minTx) tx = minTx;
 
         track.style.transform = `translateX(${tx}px)`;
     }
 
-    function showImage(carousel, index) {
-        const items = carousel.querySelectorAll('.carousel-item');
+    function getEditorialBounds(carousel) {
+        const counter = carousel.querySelector('.carousel-counter');
         const track = carousel.querySelector('.counter-track');
+        if (!counter || !track) return { min: 0, max: 0 };
+        
+        const containerWidth = counter.offsetWidth;
+        const spans = track.querySelectorAll('span');
+        if (spans.length === 0) return { min: 0, max: 0 };
+        
+        const firstSpan = spans[0];
+        const lastSpan = spans[spans.length - 1];
+        
+        const maxTx = (containerWidth / 2) - (firstSpan.offsetLeft + firstSpan.offsetWidth / 2);
+        const minTx = (containerWidth / 2) - (lastSpan.offsetLeft + lastSpan.offsetWidth / 2);
+        
+        return { min: minTx, max: maxTx };
+    }
+
+    function showImage(carousel, index) {
+        const inner = carousel.querySelector('.carousel-inner');
+        const track = carousel.querySelector('.counter-track');
+        const items = carousel.querySelectorAll('.carousel-item');
         const spans = track ? track.querySelectorAll('span') : [];
 
+        if (!inner) return;
+
+        // Update active classes for other logic
         items.forEach(item => item.classList.remove('active'));
         if (spans.length > 0) spans.forEach(span => span.classList.remove('active'));
 
@@ -502,17 +636,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleDragMove = (x, y, isTouch = false) => {
         if (!isDragging || !currentDraggingCarousel) return;
-
-        const deltaX = x - initialX;
+        
+        const dx = x - initialX;
         const items = currentDraggingCarousel.querySelectorAll('.carousel-item');
         if (items.length <= 1) return;
 
-        const SWIPE_STEP = 60; // Increased for more stable control
-        const steps = Math.round(deltaX / SWIPE_STEP);
+        const SWIPE_STEP = 60; 
+        const steps = Math.round(dx / SWIPE_STEP);
 
-        // Calculate new index based on initial position and drag distance
-        let newIndex = (initialIndex + steps) % items.length;
-        if (newIndex < 0) newIndex = items.length + newIndex;
+        // Not looping
+        let newIndex = initialIndex - steps;
+        if (newIndex < 0) newIndex = 0;
+        if (newIndex >= items.length) newIndex = items.length - 1;
 
         if (newIndex !== currentIndexes[currentDraggingCarousel.id]) {
             showImage(currentDraggingCarousel, newIndex);
@@ -520,27 +655,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const handleDragEnd = (endX) => {
-        if (isDragging && currentDraggingCarousel) {
-            const dx = endX - initialX;
-            const items = currentDraggingCarousel.querySelectorAll('.carousel-item');
-            const threshold = 30; // Minimum pixels to trigger a swipe
-
-            if (Math.abs(dx) > threshold) {
-                const currentIndex = currentIndexes[currentDraggingCarousel.id];
-                let newIndex = currentIndex;
-                
-                if (dx > 0) {
-                    // Swipe right -> Next image
-                    newIndex = (currentIndex + 1) % items.length;
-                } else {
-                    // Swipe left -> Previous image
-                    newIndex = (currentIndex - 1 + items.length) % items.length;
-                }
-                
-                showImage(currentDraggingCarousel, newIndex);
-                lastDragTime = Date.now();
-            }
-        }
         isDragging = false;
         currentDraggingCarousel = null;
     };
@@ -601,6 +715,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         activeCarousel = carousel;
         updateAboutState();
+        
+        // Ensure counter is correctly positioned even if it was previously hidden
+        const currentIndex = currentIndexes[carousel.id] || 0;
+        updateCounterPosition(carousel, currentIndex);
     }
 
     carousels.forEach(c => observer.observe(c));
@@ -720,11 +838,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentIndex = currentIndexes[activeCarousel.id] || 0;
         
         if (e.key === 'ArrowLeft') {
-            let newIndex = currentIndex - 1;
-            if (newIndex < 0) newIndex = items.length - 1;
+            let newIndex = Math.max(0, currentIndex - 1);
             showImage(activeCarousel, newIndex);
         } else if (e.key === 'ArrowRight') {
-            let newIndex = (currentIndex + 1) % items.length;
+            let newIndex = Math.min(items.length - 1, currentIndex + 1);
             showImage(activeCarousel, newIndex);
         }
     });
@@ -823,7 +940,69 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             counter.addEventListener('click', handleCounterTap);
-            counter.addEventListener('touchstart', handleCounterTap, { passive: true });
+
+            // Add smooth scrubbing to editorial counter
+            const track = counter.querySelector('.counter-track');
+            if (!track) return;
+            
+            let isEditorialCounterDragging = false;
+            let counterStartX = 0;
+            let counterInitialTx = 0;
+
+            counter.addEventListener('touchstart', (e) => {
+                isEditorialCounterDragging = true;
+                counterStartX = e.touches[0].clientX;
+                counterInitialTx = getCurrentTx(track);
+                track.style.transition = 'none';
+            }, { passive: true });
+
+            counter.addEventListener('touchmove', (e) => {
+                if (!isEditorialCounterDragging) return;
+                const x = e.touches[0].clientX;
+                const deltaX = x - counterStartX;
+                let currentTx = counterInitialTx + deltaX;
+
+                // Clamp tx to bounds
+                const bounds = getEditorialBounds(carousel);
+                if (currentTx > bounds.max) currentTx = bounds.max;
+                if (currentTx < bounds.min) currentTx = bounds.min;
+
+                track.style.transform = `translateX(${currentTx}px)`;
+
+                const containerCenter = counter.offsetWidth / 2;
+                const spans = Array.from(track.querySelectorAll('span'));
+                
+                let closestIndex = currentIndexes[carousel.id] || 0;
+                let minDistance = Infinity;
+
+                spans.forEach((span, i) => {
+                    const spanCenter = span.offsetLeft + (span.offsetWidth / 2) + currentTx;
+                    const distance = Math.abs(containerCenter - spanCenter);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestIndex = i;
+                    }
+                });
+
+                if (closestIndex !== currentIndexes[carousel.id]) {
+                    // Debounce/optimize
+                    currentIndexes[carousel.id] = closestIndex;
+                    const items = carousel.querySelectorAll('.carousel-item');
+                    const spans = Array.from(track.querySelectorAll('span'));
+                    
+                    items.forEach(item => item.classList.remove('active'));
+                    spans.forEach(span => span.classList.remove('active'));
+                    
+                    if (items[closestIndex]) items[closestIndex].classList.add('active');
+                    if (spans[closestIndex]) spans[closestIndex].classList.add('active');
+                }
+            }, { passive: false });
+
+            counter.addEventListener('touchend', () => {
+                isEditorialCounterDragging = false;
+                track.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)';
+                updateCounterPosition(carousel, currentIndexes[carousel.id]);
+            });
         }
     });
 });
