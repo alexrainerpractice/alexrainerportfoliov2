@@ -162,7 +162,7 @@ ${carouselImagesHTML}
                 .filter(item => item.type === 'Image')
                 .map((item, index) => {
                     const thumbUrl = item.image.medium ? item.image.medium.src : item.image.src;
-                    const largeUrl = item.image.large ? item.image.large.src : (item.image.medium ? item.image.medium.src : item.image.src);
+                    const largeUrl = item.image.src || (item.image.large ? item.image.large.src : (item.image.medium ? item.image.medium.src : ''));
                     const projectInfo = imageToProjectMap[item.id];
                     // Ensure description is a string and handle nulls
                     const rawDesc = item.description || '';
