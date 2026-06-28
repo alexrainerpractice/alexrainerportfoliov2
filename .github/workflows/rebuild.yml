@@ -1,0 +1,37 @@
+name: Rebuild Portfolio from Are.na
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Runs at the start of every hour
+  push:
+    branches:
+      - main # Rebuilds every time you push code changes
+  workflow_dispatch: # Allows you to manually trigger a build from the GitHub UI
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Website
+        env:
+          ARENA_PAT: ${{ secrets.ARENA_PAT }}
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./ # Deploys the entire root directory (including index.html, style.css, script.js)
+          publish_branch: gh-pages # This is the branch where the "live" site will live
