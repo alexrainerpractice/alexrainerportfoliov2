@@ -200,21 +200,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetImg = allPhotos[currentIndex];
             const largeUrl = targetImg.getAttribute('data-large');
 
-            // Load full-resolution original image directly for crisp, sharp lightbox view & zooming
-            const fullResUrl = largeUrl || targetImg.src;
-            fullImg.src = fullResUrl;
+            // Show instant preview thumbnail from grid
+            fullImg.src = targetImg.src;
 
-            // Preload neighbors (next and previous 2 images)
-            for (let i = 1; i <= 2; i++) {
-                const nextIdx = (currentIndex + i) % allPhotos.length;
-                const prevIdx = (currentIndex - i + allPhotos.length) % allPhotos.length;
-                [nextIdx, prevIdx].forEach(idx => {
-                    const preloadUrl = allPhotos[idx].getAttribute('data-large');
-                    if (preloadUrl) {
-                        const img = new Image();
-                        img.src = preloadUrl;
+            // Load 100% full-resolution original image ONLY for this specific photo
+            if (largeUrl && largeUrl !== targetImg.src) {
+                const targetIdx = index;
+                const highResLoader = new Image();
+                highResLoader.onload = () => {
+                    if (currentIndex === targetIdx) {
+                        fullImg.src = largeUrl;
                     }
-                });
+                };
+                highResLoader.src = largeUrl;
             }
 
             // Detect orientation for adaptive zoom

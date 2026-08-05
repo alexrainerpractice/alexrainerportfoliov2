@@ -128,15 +128,12 @@ function isVideoItem(item) {
 
 function getHighResUrl(item) {
     if (!item || !item.image) return '';
-    // item.image.src is the direct uncompressed full-resolution original CloudFront URL in Are.na API
-    if (item.image.src && typeof item.image.src === 'string' && item.image.src.includes('cloudfront.net')) {
+    // item.image.src is the 100% uncompressed full-resolution original CloudFront URL in Are.na API
+    if (item.image.src && typeof item.image.src === 'string') {
         return item.image.src;
     }
     if (item.image.original && (item.image.original.url || item.image.original.src)) {
         return item.image.original.url || item.image.original.src;
-    }
-    if (item.image.src && typeof item.image.src === 'string') {
-        return item.image.src;
     }
     if (item.image.large && item.image.large.src) {
         return item.image.large.src;
@@ -227,7 +224,7 @@ async function build() {
                             </div>
                         </div>`;
                     } else {
-                        const imgUrl = getHighResUrl(item);
+                        const imgUrl = item.image.medium ? item.image.medium.src : getHighResUrl(item);
                         return `
                         <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}">
                             <div class="image-container">
@@ -262,7 +259,9 @@ ${carouselImagesHTML}
             const totalCount = photoItems.length;
             const photosHTML = photoItems
                 .map((item, index) => {
-                    const thumbUrl = item.image.medium ? item.image.medium.src : item.image.src;
+                    // Small thumbnail (320x400, ~15KB) for ultra-fast grid performance
+                    const thumbUrl = item.image.small ? item.image.small.src : (item.image.medium ? item.image.medium.src : item.image.src);
+                    // 100% full-resolution original image URL for on-demand lightbox viewing
                     const largeUrl = getHighResUrl(item);
                     const projectInfo = imageToProjectMap[item.id];
                     // Ensure description is a string and handle nulls
