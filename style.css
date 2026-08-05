@@ -861,10 +861,15 @@ a.credit-name:focus,
         bottom: auto;
         left: auto;
         right: auto;
-        max-width: 100%;
+        max-width: calc(100% - 0.5rem);
         margin-top: 0.25rem;
         margin-left: 0.25rem;
+        margin-right: 0.25rem;
         padding-left: 0;
+        white-space: normal;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        box-sizing: border-box;
         opacity: 1;
         color: #e35913 !important;
         -webkit-text-stroke: 0.015rem #e35913 !important;
