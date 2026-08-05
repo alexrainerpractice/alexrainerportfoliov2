@@ -261,7 +261,8 @@ ${carouselImagesHTML}
                 .map((item, index) => {
                     const smallUrl = item.image.small ? item.image.small.src : item.image.src;
                     const mediumUrl = item.image.medium ? item.image.medium.src : item.image.src;
-                    const largeUrl = getHighResUrl(item);
+                    const largeUrl = item.image.large ? item.image.large.src : item.image.src;
+                    const originalUrl = getHighResUrl(item);
                     const projectInfo = imageToProjectMap[item.id];
                     // Ensure description is a string and handle nulls
                     const rawDesc = item.description || '';
@@ -272,7 +273,7 @@ ${carouselImagesHTML}
                         : '';
 
                     const photoNum = totalCount - index;
-                    return `                <div class="photo-item" ${dataAttrs} data-description="${description.replace(/"/g, '&quot;')}"><img src="${mediumUrl}" srcset="${smallUrl} 400w, ${mediumUrl} 1200w" sizes="(max-width: 768px) 50vw, (max-width: 1400px) 33vw, 25vw" data-large="${largeUrl}" loading="lazy" onload="this.classList.add('loaded')"><span>${photoNum}</span></div>`;
+                    return `                <div class="photo-item" ${dataAttrs} data-description="${description.replace(/"/g, '&quot;')}"><img src="${largeUrl}" srcset="${smallUrl} 400w, ${mediumUrl} 1200w, ${largeUrl} 1800w" sizes="(max-width: 768px) 50vw, 50vw" data-large="${originalUrl}" loading="lazy" onload="this.classList.add('loaded')"><span>${photoNum}</span></div>`;
                 })
                 .join('\n');
 
