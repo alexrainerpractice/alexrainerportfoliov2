@@ -310,13 +310,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const thumbs = counterTrack.querySelectorAll('.thumb-nav');
             if (thumbs.length === 0) return { min: 0, max: 0 };
             const containerWidth = carouselCounter.offsetWidth;
-            
+
             const firstThumb = thumbs[0];
             const lastThumb = thumbs[thumbs.length - 1];
-            
+
             const maxTx = (containerWidth / 2) - (firstThumb.offsetLeft + firstThumb.offsetWidth / 2);
             const minTx = (containerWidth / 2) - (lastThumb.offsetLeft + lastThumb.offsetWidth / 2);
-            
+
             return { min: minTx, max: maxTx };
         }
 
@@ -348,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Find closest thumb to center
             const containerCenter = carouselCounter.offsetWidth / 2;
             const thumbs = Array.from(counterTrack.querySelectorAll('.thumb-nav'));
-            
+
             let closestIndex = currentIndex;
             let minDistance = Infinity;
 
@@ -367,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const targetImg = allPhotos[currentIndex];
                 fullImg.src = targetImg.src; // Instant low-res update
                 currentBtn.textContent = currentIndex + 1;
-                
+
                 // Update active thumb state immediately
                 const thumbs = counterTrack.querySelectorAll('.thumb-nav');
                 thumbs.forEach((t, i) => t.classList.toggle('active', i === currentIndex));
@@ -376,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         carouselCounter.addEventListener('touchend', () => {
             isCounterDragging = false;
-            counterTrack.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)'; 
+            counterTrack.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)';
             updateFullscreenView(currentIndex); // Final high-res update and centering
         });
 
@@ -560,7 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             track.appendChild(span);
         });
-        
+
         // Initial position
         updateCounterPosition(carousel, currentIndex);
     }
@@ -585,17 +585,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const counter = carousel.querySelector('.carousel-counter');
         const track = carousel.querySelector('.counter-track');
         if (!counter || !track) return { min: 0, max: 0 };
-        
+
         const containerWidth = counter.offsetWidth;
         const spans = track.querySelectorAll('span');
         if (spans.length === 0) return { min: 0, max: 0 };
-        
+
         const firstSpan = spans[0];
         const lastSpan = spans[spans.length - 1];
-        
+
         const maxTx = (containerWidth / 2) - (firstSpan.offsetLeft + firstSpan.offsetWidth / 2);
         const minTx = (containerWidth / 2) - (lastSpan.offsetLeft + lastSpan.offsetWidth / 2);
-        
+
         return { min: minTx, max: maxTx };
     }
 
@@ -613,7 +613,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (items[index]) items[index].classList.add('active');
         if (spans[index]) spans[index].classList.add('active');
-        
+
         currentIndexes[carousel.id] = index;
         updateCounterPosition(carousel, index);
     }
@@ -636,12 +636,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleDragMove = (x, y, isTouch = false) => {
         if (!isDragging || !currentDraggingCarousel) return;
-        
+
         const dx = x - initialX;
         const items = currentDraggingCarousel.querySelectorAll('.carousel-item');
         if (items.length <= 1) return;
 
-        const SWIPE_STEP = 60; 
+        const SWIPE_STEP = 60;
         const steps = Math.round(dx / SWIPE_STEP);
 
         // Not looping
@@ -667,7 +667,7 @@ document.addEventListener('DOMContentLoaded', () => {
         entries.forEach(entry => {
             const carousel = entry.target;
             carousel.dataset.ratio = entry.intersectionRatio;
-            
+
             // Only show counter if carousel is at least 50% visible (prevents jumping on scroll)
             const showThreshold = 0.5;
             carousel.classList.toggle('show-counter', entry.intersectionRatio >= showThreshold);
@@ -680,11 +680,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         carousels.forEach((carousel, index) => {
             const ratio = parseFloat(carousel.dataset.ratio || '0');
-            
+
             // At the very top, favor the first item
             if (index === 0 && window.scrollY < 20 && ratio > 0.01) {
                 bestCarousel = carousel;
-                maxRatio = 2; 
+                maxRatio = 2;
                 return;
             }
 
@@ -702,7 +702,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function activateProject(carousel) {
         if (!carousel) return;
         const projectId = carousel.id.replace('carousel-', '');
-        
+
         // Update selection
         projectLinks.forEach(link => {
             const isActive = link.getAttribute('data-project') === projectId;
@@ -712,10 +712,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (desc) desc.classList.remove('show');
             }
         });
-        
+
         activeCarousel = carousel;
         updateAboutState();
-        
+
         // Ensure counter is correctly positioned even if it was previously hidden
         const currentIndex = currentIndexes[carousel.id] || 0;
         updateCounterPosition(carousel, currentIndex);
@@ -727,7 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetCarousel = document.getElementById(`carousel-${projectId}`);
         if (targetCarousel) {
             isClickScrolling = true;
-            
+
             // Highlight immediately
             activateProject(targetCarousel);
 
@@ -737,7 +737,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 top: yOffset,
                 behavior: 'smooth'
             });
-            
+
             // Release lock after scroll completes
             setTimeout(() => {
                 isClickScrolling = false;
@@ -831,12 +831,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Keyboard navigation for carousels
     document.addEventListener('keydown', (e) => {
         if (!activeCarousel) return;
-        
+
         const items = activeCarousel.querySelectorAll('.carousel-item');
         if (items.length === 0) return;
-        
+
         const currentIndex = currentIndexes[activeCarousel.id] || 0;
-        
+
         if (e.key === 'ArrowLeft') {
             let newIndex = Math.max(0, currentIndex - 1);
             showImage(activeCarousel, newIndex);
@@ -944,7 +944,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add smooth scrubbing to editorial counter
             const track = counter.querySelector('.counter-track');
             if (!track) return;
-            
+
             let isEditorialCounterDragging = false;
             let counterStartX = 0;
             let counterInitialTx = 0;
@@ -971,7 +971,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const containerCenter = counter.offsetWidth / 2;
                 const spans = Array.from(track.querySelectorAll('span'));
-                
+
                 let closestIndex = currentIndexes[carousel.id] || 0;
                 let minDistance = Infinity;
 
@@ -989,10 +989,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentIndexes[carousel.id] = closestIndex;
                     const items = carousel.querySelectorAll('.carousel-item');
                     const spans = Array.from(track.querySelectorAll('span'));
-                    
+
                     items.forEach(item => item.classList.remove('active'));
                     spans.forEach(span => span.classList.remove('active'));
-                    
+
                     if (items[closestIndex]) items[closestIndex].classList.add('active');
                     if (spans[closestIndex]) spans[closestIndex].classList.add('active');
                 }
