@@ -259,9 +259,8 @@ ${carouselImagesHTML}
             const totalCount = photoItems.length;
             const photosHTML = photoItems
                 .map((item, index) => {
-                    // Small thumbnail (320x400, ~15KB) for ultra-fast grid performance
-                    const thumbUrl = item.image.small ? item.image.small.src : (item.image.medium ? item.image.medium.src : item.image.src);
-                    // 100% full-resolution original image URL for on-demand lightbox viewing
+                    const smallUrl = item.image.small ? item.image.small.src : item.image.src;
+                    const mediumUrl = item.image.medium ? item.image.medium.src : item.image.src;
                     const largeUrl = getHighResUrl(item);
                     const projectInfo = imageToProjectMap[item.id];
                     // Ensure description is a string and handle nulls
@@ -273,7 +272,7 @@ ${carouselImagesHTML}
                         : '';
 
                     const photoNum = totalCount - index;
-                    return `                <div class="photo-item" ${dataAttrs} data-description="${description.replace(/"/g, '&quot;')}"><img src="${thumbUrl}" data-large="${largeUrl}" loading="lazy" onload="this.classList.add('loaded')"><span>${photoNum}</span></div>`;
+                    return `                <div class="photo-item" ${dataAttrs} data-description="${description.replace(/"/g, '&quot;')}"><img src="${mediumUrl}" srcset="${smallUrl} 400w, ${mediumUrl} 1200w" sizes="(max-width: 768px) 50vw, (max-width: 1400px) 33vw, 25vw" data-large="${largeUrl}" loading="lazy" onload="this.classList.add('loaded')"><span>${photoNum}</span></div>`;
                 })
                 .join('\n');
 
