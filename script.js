@@ -242,17 +242,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 targetX = 50; targetY = 50;
             }
 
-            currentBtn.textContent = currentIndex + 1;
+            const totalPhotos = allPhotos.length;
+            currentBtn.textContent = totalPhotos - currentIndex;
 
             if (currentIndex > 0) {
-                prevBtn.textContent = currentIndex;
+                prevBtn.textContent = totalPhotos - (currentIndex - 1);
                 prevBtn.style.visibility = 'visible';
             } else {
                 prevBtn.style.visibility = 'hidden';
             }
 
-            if (currentIndex < allPhotos.length - 1) {
-                nextBtn.textContent = currentIndex + 2;
+            if (currentIndex < totalPhotos - 1) {
+                nextBtn.textContent = totalPhotos - (currentIndex + 1);
                 nextBtn.style.visibility = 'visible';
             } else {
                 nextBtn.style.visibility = 'hidden';
@@ -611,7 +612,11 @@ document.addEventListener('DOMContentLoaded', () => {
         items.forEach(item => item.classList.remove('active'));
         if (spans.length > 0) spans.forEach(span => span.classList.remove('active'));
 
-        if (items[index]) items[index].classList.add('active');
+        if (items[index]) {
+            items[index].classList.add('active');
+            const video = items[index].querySelector('video');
+            if (video) video.play().catch(() => {});
+        }
         if (spans[index]) spans[index].classList.add('active');
 
         currentIndexes[carousel.id] = index;
