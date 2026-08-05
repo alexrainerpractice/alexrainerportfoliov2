@@ -783,7 +783,8 @@ body.profile-about-open .about_me_wrapper {
     align-items: flex-start;
 }
 
-.carousel img {
+.carousel img,
+.carousel video {
     display: block;
     max-height: 85vh;
     width: auto;
@@ -791,11 +792,13 @@ body.profile-about-open .about_me_wrapper {
     user-select: none;
     -webkit-user-drag: none;
     opacity: 1;
-    /* Ensure visibility by default */
+    object-fit: contain;
+    outline: none;
 }
 
 .photo-item img.loaded,
-.carousel img.loaded {
+.carousel img.loaded,
+.carousel video.loaded {
     opacity: 1;
 }
 
@@ -869,8 +872,14 @@ a.credit-name:focus,
         box-sizing: border-box;
     }
 
-    .carousel img {
+    .carousel img,
+    .carousel video {
         flex: 0 0 auto;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        max-height: 85vh;
+        object-fit: contain;
     }
 
     .image-credit {
@@ -1317,7 +1326,8 @@ a.credit-name:focus,
         row-gap: 0;
     }
 
-    .carousel img {
+    .carousel img,
+    .carousel video {
         width: auto;
         max-width: 100%;
         object-fit: contain;
@@ -1325,7 +1335,8 @@ a.credit-name:focus,
         opacity: 1;
     }
 
-    .carousel img.loaded {
+    .carousel img.loaded,
+    .carousel video.loaded {
         opacity: 1;
     }
 

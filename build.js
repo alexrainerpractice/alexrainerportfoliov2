@@ -111,6 +111,32 @@ function formatImageDescription(rawDesc) {
     return `<span class="image-credit">${desc}</span>`;
 }
 
+function isVideoItem(item) {
+    if (!item) return false;
+    const url = (item.attachment?.url || item.embed?.url || item.source?.url || '').toLowerCase();
+    const contentType = (item.attachment?.content_type || '').toLowerCase();
+    if (contentType.startsWith('video/') || /\.(mp4|mov|webm|m4v)(\?.*)?$/i.test(url)) {
+        return true;
+    }
+    if (item.type === 'Media' || item.type === 'Attachment') {
+        if (contentType.startsWith('video/') || /\.(mp4|mov|webm|m4v)(\?.*)?$/i.test(url)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function getHighResUrl(item) {
+    if (!item || !item.image) return '';
+    if (item.image.original && (item.image.original.url || item.image.original.src)) {
+        return item.image.original.url || item.image.original.src;
+    }
+    if (item.image.large && (item.image.large.url || item.image.large.src)) {
+        return item.image.large.url || item.image.large.src;
+    }
+    return item.image.src || (item.image.medium ? item.image.medium.src : '');
+}
+
 async function build() {
     try {
         console.log('Starting Are.na Build Process...');
@@ -156,11 +182,11 @@ async function build() {
                 const rawDescription = descItem && descItem.content ? (descItem.content.html || descItem.content.plain || '') : '';
                 const formattedDesc = formatProjectDescription(rawDescription);
                 const displayTitle = (descItem && descItem.title) ? descItem.title : project.title.replace(/^PORTFOLIO \/ /i, '');
-                const images = projContents.filter(item => item.type === 'Image');
+                const mediaItems = projContents.filter(item => (item.type === 'Image' && item.image) || isVideoItem(item));
 
-                // Map these images to this project
-                images.forEach(img => {
-                    imageToProjectMap[img.id] = { id: projId, title: displayTitle };
+                // Map these items to this project
+                mediaItems.forEach(item => {
+                    imageToProjectMap[item.id] = { id: projId, title: displayTitle };
                 });
 
                 const labelHTML = isInProgress
@@ -177,17 +203,32 @@ async function build() {
                             <span class="about_project">${isInProgress ? '' : formattedDesc}</span>
                         </li>`;
 
-                let carouselImagesHTML = images.map((img, imgIndex) => {
-                    const imgUrl = img.image.large ? img.image.large.src : img.image.src;
-                    const creditHTML = formatImageDescription(img.description);
+                let carouselImagesHTML = mediaItems.map((item, imgIndex) => {
+                    const isVideo = isVideoItem(item);
+                    const creditHTML = formatImageDescription(item.description);
 
-                    return `
+                    if (isVideo) {
+                        const videoUrl = item.attachment ? item.attachment.url : (item.embed ? item.embed.url : (item.source ? item.source.url : ''));
+                        const posterUrl = getHighResUrl(item);
+                        const posterAttr = posterUrl ? ` poster="${posterUrl}"` : '';
+
+                        return `
+                        <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}">
+                            <div class="image-container">
+                                <video src="${videoUrl}"${posterAttr} autoplay muted loop playsinline disablePictureInPicture preload="auto" onloadstart="this.classList.add('loaded')" onloadeddata="this.classList.add('loaded')"></video>
+                                ${creditHTML}
+                            </div>
+                        </div>`;
+                    } else {
+                        const imgUrl = getHighResUrl(item);
+                        return `
                         <div class="carousel-item ${imgIndex === 0 ? 'active' : ''}">
                             <div class="image-container">
                                 <img src="${imgUrl}" onload="this.classList.add('loaded')">
                                 ${creditHTML}
                             </div>
                         </div>`;
+                    }
                 }).join('\n');
 
                 carouselsHTML += `
@@ -210,11 +251,12 @@ ${carouselImagesHTML}
         // --- PHOTOGRAPHY SECTION (Use image map for linking) ---
         try {
             const photoContents = await fetchAllArenaContents(PHOTO_CHANNEL);
-            const photosHTML = photoContents
-                .filter(item => item.type === 'Image')
+            const photoItems = photoContents.filter(item => item.type === 'Image');
+            const totalCount = photoItems.length;
+            const photosHTML = photoItems
                 .map((item, index) => {
                     const thumbUrl = item.image.medium ? item.image.medium.src : item.image.src;
-                    const largeUrl = item.image.src || (item.image.large ? item.image.large.src : (item.image.medium ? item.image.medium.src : ''));
+                    const largeUrl = getHighResUrl(item);
                     const projectInfo = imageToProjectMap[item.id];
                     // Ensure description is a string and handle nulls
                     const rawDesc = item.description || '';
@@ -224,7 +266,8 @@ ${carouselImagesHTML}
                         ? `data-project-id="${projectInfo.id}" data-project-title="${projectInfo.title}"`
                         : '';
 
-                    return `                <div class="photo-item" ${dataAttrs} data-description="${description.replace(/"/g, '&quot;')}"><img src="${thumbUrl}" data-large="${largeUrl}" loading="lazy" onload="this.classList.add('loaded')"><span>${index + 1}</span></div>`;
+                    const photoNum = totalCount - index;
+                    return `                <div class="photo-item" ${dataAttrs} data-description="${description.replace(/"/g, '&quot;')}"><img src="${thumbUrl}" data-large="${largeUrl}" loading="lazy" onload="this.classList.add('loaded')"><span>${photoNum}</span></div>`;
                 })
                 .join('\n');
 
