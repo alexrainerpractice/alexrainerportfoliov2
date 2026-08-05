@@ -619,6 +619,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const SWIPE_STEP = 35;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let currentDraggingCarousel = null;
     let initialX = 0;
     let initialIndex = 0;
     let startTime = 0;
