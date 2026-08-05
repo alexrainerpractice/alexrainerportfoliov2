@@ -200,20 +200,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetImg = allPhotos[currentIndex];
             const largeUrl = targetImg.getAttribute('data-large');
 
-            // Show thumbnail immediately (low-res but instant)
-            fullImg.src = targetImg.src;
-
-            // Load high-res in background
-            if (largeUrl) {
-                const highResLoader = new Image();
-                highResLoader.onload = () => {
-                    // Only update if we haven't swiped away already
-                    if (currentIndex === index) {
-                        fullImg.src = largeUrl;
-                    }
-                };
-                highResLoader.src = largeUrl;
-            }
+            // Load full-resolution original image directly for crisp, sharp lightbox view & zooming
+            const fullResUrl = largeUrl || targetImg.src;
+            fullImg.src = fullResUrl;
 
             // Preload neighbors (next and previous 2 images)
             for (let i = 1; i <= 2; i++) {

@@ -128,13 +128,20 @@ function isVideoItem(item) {
 
 function getHighResUrl(item) {
     if (!item || !item.image) return '';
+    // item.image.src is the direct uncompressed full-resolution original CloudFront URL in Are.na API
+    if (item.image.src && typeof item.image.src === 'string' && item.image.src.includes('cloudfront.net')) {
+        return item.image.src;
+    }
     if (item.image.original && (item.image.original.url || item.image.original.src)) {
         return item.image.original.url || item.image.original.src;
     }
-    if (item.image.large && (item.image.large.url || item.image.large.src)) {
-        return item.image.large.url || item.image.large.src;
+    if (item.image.src && typeof item.image.src === 'string') {
+        return item.image.src;
     }
-    return item.image.src || (item.image.medium ? item.image.medium.src : '');
+    if (item.image.large && item.image.large.src) {
+        return item.image.large.src;
+    }
+    return '';
 }
 
 async function build() {
