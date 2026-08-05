@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const gridDecrease = document.getElementById('grid-decrease');
     const gridIncrease = document.getElementById('grid-increase');
-    const scales = [0.85, 1.4, 2.2]; // Small, Medium, Large
+    const scales = [0.6, 1.0, 1.6]; // Small, Medium, Big
     // Default: Small (0) on mobile, Medium (1) on desktop
     let scaleIndex = window.innerWidth <= 768 ? 0 : 1;
 
