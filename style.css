@@ -377,11 +377,21 @@ body.profile-about-open .about_me_wrapper {
     }
 }
 
-.about_me p,
-.about_project p {
+.about_me p {
     display: inline;
     margin: 0;
     padding: 0;
+}
+
+.about_project p {
+    display: block;
+    margin: 0;
+    padding: 0;
+    line-height: 1.25rem;
+}
+
+.about_project p+p {
+    margin-top: 1.25rem;
 }
 
 .project_list {
@@ -541,6 +551,7 @@ body.profile-about-open .about_me_wrapper {
 .about_project {
     display: none;
     max-width: 100%;
+    line-height: 1.25rem;
 }
 
 .about_project.show {
@@ -792,34 +803,48 @@ body.profile-about-open .about_me_wrapper {
     position: absolute;
     bottom: 0.25rem;
     left: 0.25rem;
-    right: auto;
+    right: 0.25rem;
+    max-width: calc(100% - 0.5rem);
     z-index: 10;
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
     pointer-events: none;
-    line-height: 1;
-    color: #000 !important;
-    -webkit-text-stroke: 0.015rem black !important;
+    line-height: 1.25;
+    color: #e35913 !important;
+    -webkit-text-stroke: 0.015rem #e35913 !important;
     opacity: 1;
 }
 
 .credit-label {
-    opacity: 0.35;
-    color: #000;
+    opacity: 1;
+    color: #e35913 !important;
+    -webkit-text-stroke: 0.015rem #e35913 !important;
 }
 
-.credit-name {
-    color: #000 !important;
-    -webkit-text-stroke: 0.015rem black !important;
+.credit-name,
+.credit-label a,
+.image-credit a {
+    color: #e35913 !important;
+    -webkit-text-stroke: 0.015rem #e35913 !important;
     text-decoration: none !important;
     pointer-events: auto;
+    cursor: pointer;
 }
 
 a.credit-name:hover,
 a.credit-name:active,
-a.credit-name:focus {
+a.credit-name:focus,
+.credit-label a:hover,
+.credit-label a:active,
+.credit-label a:focus,
+.image-credit a:hover,
+.image-credit a:active,
+.image-credit a:focus {
     text-decoration: none !important;
     border-bottom: none !important;
     outline: none !important;
+    opacity: .35;
 }
 
 @media (max-width: 768px) {
@@ -836,12 +861,13 @@ a.credit-name:focus {
         bottom: auto;
         left: auto;
         right: auto;
+        max-width: 100%;
         margin-top: 0.25rem;
         margin-left: 0.25rem;
         padding-left: 0;
         opacity: 1;
-        color: #000 !important;
-        -webkit-text-stroke: 0.015rem black !important;
+        color: #e35913 !important;
+        -webkit-text-stroke: 0.015rem #e35913 !important;
     }
 }
 
