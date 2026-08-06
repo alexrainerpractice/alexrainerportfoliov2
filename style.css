@@ -1059,7 +1059,7 @@ a.credit-name:focus,
     background: white;
     z-index: 5;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr);
+    grid-template-columns: minmax(3.5rem, 1fr) minmax(0, auto) minmax(3.5rem, 1fr);
     grid-template-rows: 1fr;
     align-items: center;
     justify-items: center;
@@ -1068,7 +1068,7 @@ a.credit-name:focus,
 
 .fullscreen-overlay img {
     grid-column: 2;
-    max-width: 100vw;
+    max-width: calc(100vw - 7rem);
     max-height: 100dvh;
     object-fit: contain;
     cursor: zoom-in;
