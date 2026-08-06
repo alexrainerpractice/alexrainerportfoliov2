@@ -578,12 +578,16 @@ body.profile-about-open .about_me_wrapper {
     cursor: pointer;
 }
 
-.nav-gutter.left {
+.nav-gutter.left,
+.nav-gutter.left span {
     grid-column: 1;
+    cursor: w-resize;
 }
 
-.nav-gutter.right {
+.nav-gutter.right,
+.nav-gutter.right span {
     grid-column: 3;
+    cursor: e-resize;
 }
 
 .nav-gutter span {
@@ -595,7 +599,6 @@ body.profile-about-open .about_me_wrapper {
     justify-content: center;
     text-align: center;
     padding: 0;
-    cursor: pointer;
     pointer-events: auto;
     transition: all 0.25s cubic-bezier(.05, .82, .31, .96);
 }
